@@ -17,7 +17,7 @@ onAuthStateChanged(auth, async (user) => {
     setupClientes(querySnapshot.docs);
     console.log(querySnapshot);
   } else {
-    
+    console.log("AuthStateChanged no cargo! ");
     setupClientes([])
   }
   loginCheck(user);

@@ -20,5 +20,6 @@ export const  setupClientes = (data) => {
 
     } else {
         clientesList.innerHTML = '<h1> No hay clientes aun </h1>'
+        console.log('La lista no carga correctamente')
     } 
 } 
