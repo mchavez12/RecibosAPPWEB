@@ -1,20 +1,31 @@
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import {setDoc, doc} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js"; 
+import {
+  setDoc,
+  doc,
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { auth, db } from "./firebase.js";
 import { showMessage } from "./showMessage.js";
 
 const RegistroForm = document.querySelector("#Registro-form");
-
 RegistroForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const usuario = RegistroForm["registro-usuario"].value;
   const email = RegistroForm["registro-email"].value;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const contraseña = RegistroForm["registro-contraseña"].value;
-  const confirmarContraseña = RegistroForm["registro-contraseña-confirmar"].value;
+  const confirmarContraseña =
+    RegistroForm["registro-contraseña-confirmar"].value;
 
+  if (!emailRegex.test(email)) {
+    showMessage("Por favor, introduce un correo electrónico válido", "error");
+    return;
+  }
   if (contraseña !== confirmarContraseña) {
-    showMessage("Las contraseñas no coinciden, ponte pilas, no te me duermas", "error");
+    showMessage(
+      "Las contraseñas no coinciden, ponte pilas, no te me duermas",
+      "error"
+    );
     return;
   }
 
@@ -31,7 +42,12 @@ RegistroForm.addEventListener("submit", async (e) => {
     console.log(userCredentials);
 
     //Mandarle datos a la coleccion de Firestore de Usuarios, la de su nombre, email y contraseña.
-    await addUsuarioFirestore(userCredentials.user.uid, usuario, email, contraseña);
+    await addUsuarioFirestore(
+      userCredentials.user.uid,
+      usuario,
+      email,
+      contraseña
+    );
 
     //Cerrar Modal despues de registro
     const registroModal = document.querySelector("#registroModal");
@@ -39,6 +55,9 @@ RegistroForm.addEventListener("submit", async (e) => {
     modal.hide();
 
     showMessage("Bievenido " + userCredentials.user.email, "success");
+
+    window.location.href = 'views/panelPrincipal.html';
+    
   } catch (error) {
     if (error.code === "auth/email-already-in-use") {
       //Caso de error para correo existente
@@ -54,16 +73,21 @@ RegistroForm.addEventListener("submit", async (e) => {
   }
 });
 
-async function addUsuarioFirestore(uid, nombreUsuario, correoElectronico, contraseña) {
-    try {
-      await setDoc(doc(db, "Usuarios", uid), {
-        nombreUsuario: nombreUsuario,
-        correoElectronico: correoElectronico,
-        contraseña: contraseña,
-      });
-      console.log("Usuario agregado a Firestore");
-    } catch (error) {
-      console.error("Error al guardar el usuario en Firestore", error);
-    }
+export async function addUsuarioFirestore(
+  uid,
+  nombreUsuario,
+  correoElectronico,
+  contraseña
+) {
+  try {
+    await setDoc(doc(db, "Usuarios", uid), {
+      nombreUsuario: nombreUsuario,
+      correoElectronico: correoElectronico,
+      contraseña: contraseña,
+    });
+    console.log("Usuario agregado a Firestore");
+    console.log("El uid guardado es: " + uid);
+  } catch (error) {
+    console.error("Error al guardar el usuario en Firestore", error);
   }
-  
+}
