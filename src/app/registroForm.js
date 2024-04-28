@@ -75,13 +75,13 @@ RegistroForm.addEventListener("submit", async (e) => {
 
 export async function addUsuarioFirestore(
   uid,
-  nombreUsuario,
+  NombreUsuario,
   correoElectronico,
   contraseña
 ) {
   try {
     await setDoc(doc(db, "Usuarios", uid), {
-      nombreUsuario: nombreUsuario,
+      NombreUsuario: NombreUsuario,
       correoElectronico: correoElectronico,
       contraseña: contraseña,
     });

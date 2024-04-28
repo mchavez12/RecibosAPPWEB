@@ -6,21 +6,21 @@ import {
 import { db, auth } from "../firebase.js";
 import { showMessage } from "../showMessage.js";
 
+let initialized = false;
+
 document.addEventListener("DOMContentLoaded", function () {
+  if (initialized) return; // Esto para evitar la inicialización duplicada (prueba para un error)
+  initialized = true;
+
   const addCliente = document.getElementById("nuevoClienteForm");
 
   addCliente.addEventListener("submit", async function (e) {
-    e.preventDefault(); // Evita que el formulario se envíe automáticamente
+    e.preventDefault();
 
     const nombre = addCliente.nombre.value;
     const direccion = addCliente.direccion.value;
     const telefono = parseInt(addCliente.telefono.value);
     const tipoAsociado = addCliente.tipoAsociado.value;
-
-    if (isNaN(telefono) || telefono.toString().length !== 10) {
-      showMessage("El número de teléfono debe tener 10 dígitos", "error");
-      return;
-    }
 
     try {
       const currentUser = auth.currentUser;
