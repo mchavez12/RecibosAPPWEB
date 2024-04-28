@@ -4,10 +4,7 @@ import { auth } from "./app/firebase.js";
 import { loginCheck } from "./app/loginCheck.js";
 
 import "./app/logout.js";
-import "./app/iniciarsesionForm.js";
-import "./app/registroForm.js";
-import "./app/googleLogin.js";
-import "./app/githubLogin.js";
+import "./app/appPanelPrincipal/ajustesPerfil.js";
 
 onAuthStateChanged(auth, async (user) => {
   
