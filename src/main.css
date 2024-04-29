@@ -218,3 +218,11 @@ body {
 #myUL li a:hover:not(.header) {
   background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
+
+#resultadosClientes li {
+  cursor: pointer;
+}
+
+#resultadosClientes li:hover {
+  background-color: #d3d3d3; 
+}

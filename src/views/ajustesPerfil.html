@@ -61,7 +61,7 @@
         <h1 class="main mt-3 mb-3 text-center" style="color: grey">
           Ajustes del perfil
         </h1>
-        <h2 class="main mt-5 mb-5 text-center fun-text" id="nombreUsuarioDisplay">Nombre de usuario</h2>
+        <h1 class="main mt-5 mb-5 text-center fun-text" id="nombreUsuarioDisplay">Nombre de usuario</h2>
         <form>
           <div class="mb-3 d-flex justify-content-center">
             <div class="form-check me-3">
@@ -121,32 +121,57 @@
               >
               <input type="text" class="form-control" id="codigoEmpresa" placeholder="Ej: EJM951103H34" />
             </div>
-            <div class="mb-3 text-center">
-              <label for="logoEmpresa" class="form-label"
-                >Logotipo de la empresa</label
-              >
+
+            <div class="mb-3 text-center" style="text-align: center;">
+              <label for="logoEmpresa" class="form-label">Logotipo de la empresa</label>
+              
+              <!-- Campo de archivo para seleccionar imagen -->
               <input
                 class="form-control"
                 type="file"
                 id="logoEmpresa"
                 accept="image/*"
-                onchange="showImage(this)"
+                onchange="guardarArchivo(this)" 
               />
+              
+              <!-- Botón para visualizar la imagen cargada -->
+              <button
+                type="button"
+                class="btn btn-primary mt-3"
+                id="visualizarImagen"
+                onclick="mostrarImagen()"
+              >
+                Visualizar imagen
+              </button>
+             
+              <!-- Botón para poder borrar la imagen guardada -->
+              <button
+                type="button"
+                class="btn btn-danger mt-3"
+                id="borrarImagen"
+                onclick="borrarImagen()"
+              >
+                Borrar imagen
+              </button>
+              
+              <!-- Vista previa de la imagen -->
               <img
                 src=""
                 id="logoEmpresaPreview"
                 alt="Logotipo de la empresa"
-                class="img-fluid mt-3"
-                style="max-width: 100px; display: none"
-              />
+                class="img-fluid mt-3 text-center"
+                style="display: block; margin: auto; max-height: 300px; max-width: 300px; display: none;"              /> 
+                <!-- ES POSIBLE QUE SEA NECESARIO CAMBIAR EL WIDTH Y HEIGHT DE LA IMAGEN PARA LA PLANTILLA DEL RECIBO -->
             </div>
+            
+            
           </div>
 
           <!-- #################### FORMULARIO INDIVIDUAL -->
 
           <div id="datosIndividual" style="display: block" class="text-center">
             <div class="mb-3 text-center">
-              <label for="nombreIndividual" class="form-label">Nombre</label>
+              <label for="nombreIndividual" class="form-label"><i class="bi bi-person"></i> Nombre</label>
               <input
                 type="text"
                 class="form-control"
@@ -155,7 +180,7 @@
             </div>
             <div class="mb-3 text-center">
               <label for="direccionIndividual" class="form-label"
-                >Dirección</label
+                ><i class="bi bi-geo-alt-fill"></i> Dirección</label
               >
               <input
                 type="text"
@@ -165,12 +190,12 @@
             </div>
             <div class="mb-3 text-center">
               <label for="telefonoIndividual" class="form-label"
-                >Teléfono</label
+                ><i class="bi bi-telephone-fill"></i> Teléfono</label
               >
               <input type="tel" class="form-control" id="telefonoIndividual" />
             </div>
           </div>
-          <button type="submit" class="btn btn-primary" style="background-color: #ff6464;">Guardar cambios</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #ff6464;"><i class="bi bi-file-plus"></i> Guardar cambios</button>
         </form>
       </div>
     </main>
