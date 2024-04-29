@@ -2,6 +2,9 @@ import {
   doc,
   setDoc,
   collection,
+  query,
+  where,
+  getDocs,
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { db, auth } from "../firebase.js";
 import { showMessage } from "../showMessage.js";
@@ -29,6 +32,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const userId = currentUser.uid;
         const userDocRef = doc(db, "Usuarios", userId);
         const clientesCollectionRef = collection(userDocRef, "Clientes");
+
+        const nombreQuery = query(clientesCollectionRef, where("nombre", "==", nombre));
+        const querySnapshot = await getDocs(nombreQuery);
+
+        if (!querySnapshot.empty) {
+          showMessage("El nombre del cliente ya existe", "error");
+          console.error("Cliente duplicado: el nombre ya existe.");
+          return;
+        }
 
         await setDoc(doc(clientesCollectionRef), {
           nombre: nombre,

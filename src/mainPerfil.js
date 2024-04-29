@@ -6,6 +6,7 @@ import { loginCheck } from "./app/loginCheck.js";
 import "./app/logout.js";
 import "./app/appPanelPrincipal/ajustesPerfil.js";
 
+
 onAuthStateChanged(auth, async (user) => {
   
 
