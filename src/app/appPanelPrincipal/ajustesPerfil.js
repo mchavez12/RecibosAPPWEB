@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById("nombreEmpresa").value = perfilData.nombreEmpresa || "";
             document.getElementById("direccionEmpresa").value = perfilData.direccionEmpresa || "";
             document.getElementById("telefonoEmpresa").value = perfilData.telefonoEmpresa || "";
+            document.getElementById("codigoEmpresa").value = perfilData.codigoEmpresa || "";
           } else if (perfilData.tipo === "individual") {
             radioIndividual.checked = true;
             datosEmpresa.style.display = "none";
