@@ -1,5 +1,6 @@
 import {
   doc,
+  addDoc,
   setDoc,
   getDoc,
   updateDoc,
@@ -15,8 +16,10 @@ import {
   ref,
   deleteObject,
   uploadBytesResumable,
+  uploadBytes,
   getDownloadURL,
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+const storage = getStorage();
 import { showMessage } from "../showMessage.js";
 
 // Función para mostrar/ocultar campos según el tipo de perfil seleccionado
@@ -123,7 +126,6 @@ async function cargarPerfil() {
 }
 
 
-
 let clienteSeleccionado = null;
 
 async function buscarClientes() {
@@ -206,13 +208,185 @@ function guardarCliente() {
       clienteSeleccionado.telefono;
 
     showMessage("Información del cliente guardada", "success");
-    setTimeout(() => {
-      $("#modalCliente").modal("hide");
-    }, 1000);
   } else {
     showMessage("No hay cliente seleccionado", "error");
   }
 }
+
+const { jsPDF } = window.jspdf;
+const signatureCanvas = document.getElementById("signatureCanvas");
+const clearButton = document.getElementById("clearButton");
+// Evento para borrar la firma
+clearButton.addEventListener("click", function() {
+  clearCanvas();
+});
+
+function clearCanvas() {
+  const context = signatureCanvas.getContext("2d");
+  context.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+}
+
+// Función para obtener la imagen de la firma como una URL de datos
+function getSignatureImage() {
+  return signatureCanvas.toDataURL();
+}
+
+// Función para convertir un archivo a base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+// Función para generar el PDF y convertirlo a Blob
+async function generarPDF() {
+  const pdf = new jsPDF();
+
+  const tituloRecibo = document.getElementById("tituloRecibo").value;
+  const nombreCliente = document.getElementById("nombreCliente").value;
+  const direccionCliente = document.getElementById("direccionCliente").value;
+  const telefonoCliente = document.getElementById("telefonoCliente").value;
+  const fechaRecibo = document.getElementById("fechaRecibo").value;
+  const conceptoRecibo = document.getElementById("conceptoRecibo").value;
+  const cantidadRecibo = document.getElementById("cantidadRecibo").value;
+  const selectMoneda = document.getElementById("selectMoneda").value;
+  const firmaURL = getSignatureImage();
+
+  let datosEmisor = {};
+
+  if (document.getElementById("perfilEmpresa").checked) {
+    datosEmisor = {
+      tipoPerfil: "empresa",
+      nombre: document.getElementById("nombreEmpresa").value,
+      direccion: document.getElementById("direccionEmpresa").value,
+      telefono: document.getElementById("telefonoEmpresa").value,
+      codigoEmpresa: document.getElementById("codigoEmpresa").value,
+    };
+
+    // Cargar la imagen del logo de la empresa
+    const logoFile = document.getElementById("logoEmpresa").files[0];
+    if (logoFile) {
+      const logoBase64 = await fileToBase64(logoFile);
+      const imgProps = pdf.getImageProperties(logoBase64);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const imgWidth = pdfWidth / 4; // Ajusta el tamaño de la imagen si es necesario
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+      pdf.addImage(logoBase64, 'JPEG', 10, 10, imgWidth, imgHeight);
+    }
+  } else if (document.getElementById("perfilIndividual").checked) {
+    datosEmisor = {
+      tipoPerfil: "individual",
+      nombre: document.getElementById("nombreIndividual").value,
+      direccion: document.getElementById("direccionIndividual").value,
+      telefono: document.getElementById("telefonoIndividual").value,
+    };
+  }
+
+  // Agregar contenido al PDF
+  pdf.setFontSize(18);
+  pdf.text("Recibo", 10, 30);
+  pdf.setFontSize(12);
+  pdf.text(`Título: ${tituloRecibo}`, 10, 40);
+  pdf.text(`Fecha: ${fechaRecibo}`, 10, 50);
+  pdf.text(`Cliente: ${nombreCliente}`, 10, 60);
+  pdf.text(`Dirección: ${direccionCliente}`, 10, 70);
+  pdf.text(`Teléfono: ${telefonoCliente}`, 10, 80);
+  pdf.text(`Concepto: ${conceptoRecibo}`, 10, 90);
+  pdf.text(`Cantidad: ${cantidadRecibo} ${selectMoneda}`, 10, 100);
+
+  pdf.text(`Emitido por:`, 10, 110);
+  pdf.text(`Nombre: ${datosEmisor.nombre}`, 10, 120);
+  pdf.text(`Dirección: ${datosEmisor.direccion}`, 10, 130);
+  pdf.text(`Teléfono: ${datosEmisor.telefono}`, 10, 140);
+
+  if (datosEmisor.tipoPerfil === "empresa") {
+    pdf.text(`Código Empresa: ${datosEmisor.codigoEmpresa}`, 10, 150);
+  }
+
+  // Agregar firma al PDF
+  if (firmaURL) {
+    const imgProps = pdf.getImageProperties(firmaURL);
+    const imgWidth = 50; // Ajusta el tamaño de la imagen de la firma si es necesario
+    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+    pdf.addImage(firmaURL, 'JPEG', 10, 160, imgWidth, imgHeight);
+  }
+
+  // Generar el PDF como un Blob
+  const pdfBlob = pdf.output('blob');
+
+  // Guardar el PDF en Firebase Storage
+  await guardarReciboPDFEnFirestore(pdfBlob);
+}
+
+// Función para guardar el PDF en Firebase Storage y almacenar la URL en Firestore
+async function guardarReciboPDFEnFirestore(pdfBlob) {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      // Crear una referencia a Firebase Storage
+      const storagePath = `Usuarios/${user.uid}/Recibos/${Date.now()}.pdf`;
+      const storageRef = ref(storage, storagePath);
+
+      // Subir el PDF a Firebase Storage
+      const snapshot = await uploadBytes(storageRef, pdfBlob);
+
+      // Obtener la URL de descarga del PDF
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // Obtener una referencia al documento del usuario
+      const userDocRef = doc(db, "Usuarios", user.uid);
+
+      // Guardar la URL del PDF en Firestore
+      const reciboData = {
+        tituloRecibo: document.getElementById("tituloRecibo").value,
+        nombreCliente: document.getElementById("nombreCliente").value,
+        direccionCliente: document.getElementById("direccionCliente").value,
+        telefonoCliente: document.getElementById("telefonoCliente").value,
+        fechaRecibo: document.getElementById("fechaRecibo").value,
+        conceptoRecibo: document.getElementById("conceptoRecibo").value,
+        cantidadRecibo: document.getElementById("cantidadRecibo").value,
+        selectMoneda: document.getElementById("selectMoneda").value,
+        firmaURL: getSignatureImage(),
+        pdfURL: downloadURL,
+        datosEmisor: {
+          nombre: document.getElementById("nombreIndividual").value || document.getElementById("nombreEmpresa").value,
+          direccion: document.getElementById("direccionIndividual").value || document.getElementById("direccionEmpresa").value,
+          telefono: document.getElementById("telefonoIndividual").value || document.getElementById("telefonoEmpresa").value,
+        }
+      };
+
+      // Agregar un nuevo documento a la subcolección "Recibos"
+      await addDoc(collection(userDocRef, "Recibos"), reciboData);
+
+      showMessage("Recibo creado exitosamente", "success");
+    } else {
+      console.error("Usuario no autenticado");
+      showMessage("Usuario no autenticado", "error");
+    }
+  } catch (error) {
+    console.error("Error al guardar el recibo:", error);
+    showMessage("Error al guardar el recibo", "error");
+  }
+}
+
+// Evento para el botón "Crear Recibo" que llama a la función generarPDF al hacer clic
+document.addEventListener("DOMContentLoaded", function () {
+  const botonCrearRecibo = document.getElementById("btnCrearRecibo");
+
+  if (botonCrearRecibo) {
+    botonCrearRecibo.addEventListener("click", function (event) {
+      event.preventDefault(); // Evita el envío del formulario
+      generarPDF();
+    });
+  } else {
+    console.error("Botón 'Crear Recibo' no encontrado");
+  }
+});
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputFile = document.getElementById("logoEmpresa");
@@ -311,7 +485,7 @@ export async function guardarArchivo(input) {
               console.error("Element 'logoEmpresaPreview' no encontrado.");
             }
 
-            showMessage("Archivo cargado con éxito", "success");
+            showMessage("Imagen cargada con éxito", "success");
 
           } catch (error) {
             console.error("Error al obtener la URL de descarga:", error);
@@ -328,8 +502,6 @@ export async function guardarArchivo(input) {
     showMessage("No se ha seleccionado ningún archivo", "warning");
   }
 }
-
-
 
 
 // Función para borrar la imagen de Firebase Storage
