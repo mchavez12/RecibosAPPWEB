@@ -73,6 +73,7 @@ async function cargarPerfil() {
           // Si el botón de borrar imagen existe, hazlo visible
           btnBorrarImagen.style.display = "inline-block"; // Cambia el estilo para mostrarlo
         }
+
         
       } catch (error) {
         console.error("No se encontró un logotipo de perfil para este usuario.");
@@ -245,73 +246,90 @@ function fileToBase64(file) {
 async function generarPDF() {
   const pdf = new jsPDF();
 
-  const tituloRecibo = document.getElementById("tituloRecibo").value;
-  const nombreCliente = document.getElementById("nombreCliente").value;
-  const direccionCliente = document.getElementById("direccionCliente").value;
-  const telefonoCliente = document.getElementById("telefonoCliente").value;
-  const fechaRecibo = document.getElementById("fechaRecibo").value;
-  const conceptoRecibo = document.getElementById("conceptoRecibo").value;
-  const cantidadRecibo = document.getElementById("cantidadRecibo").value;
-  const selectMoneda = document.getElementById("selectMoneda").value;
+  const tituloRecibo = document.getElementById("tituloRecibo").value || "(Recibo / Nota de entrega)"
+  const nombreCliente = document.getElementById("nombreCliente").value || "(No se proporcionó)";
+  const direccionCliente = document.getElementById("direccionCliente").value || "(No se proporcionó)";
+  const telefonoCliente = document.getElementById("telefonoCliente").value || "(No se proporcionó)";
+  const fechaRecibo = document.getElementById("fechaRecibo").value || "(No se proporcionó)";
+  const conceptoRecibo = document.getElementById("conceptoRecibo").value || "(No se proporcionó)";
+  const cantidadRecibo = document.getElementById("cantidadRecibo").value || "(No se proporcionó)";
+  const selectMoneda = document.getElementById("selectMoneda").value || "(No se proporcionó)";
+  const tipoAsociado = document.getElementById("tipoAsociado").value || "(No se proporcionó)";
   const firmaURL = getSignatureImage();
 
   let datosEmisor = {};
+  let textoRecibo = "";
+  let tituloDocumento = "";
 
   if (document.getElementById("perfilEmpresa").checked) {
     datosEmisor = {
       tipoPerfil: "empresa",
-      nombre: document.getElementById("nombreEmpresa").value,
-      direccion: document.getElementById("direccionEmpresa").value,
-      telefono: document.getElementById("telefonoEmpresa").value,
-      codigoEmpresa: document.getElementById("codigoEmpresa").value,
+      nombre: document.getElementById("nombreEmpresa").value || "(No se proporcionó)",
+      direccion: document.getElementById("direccionEmpresa").value || "(No se proporcionó)",
+      telefono: document.getElementById("telefonoEmpresa").value || "(No se proporcionó)",
+      codigoEmpresa: document.getElementById("codigoEmpresa").value || "(No se proporcionó)",
     };
-
-    // Cargar la imagen del logo de la empresa
+    // Cargar la imagen del logo en caso de que sea empresa
     const logoFile = document.getElementById("logoEmpresa").files[0];
     if (logoFile) {
       const logoBase64 = await fileToBase64(logoFile);
       const imgProps = pdf.getImageProperties(logoBase64);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const imgWidth = pdfWidth / 4; // Ajusta el tamaño de la imagen si es necesario
+      const imgWidth = 30; // Ajusta el tamaño de la imagen del logo a un tamaño pequeño
       const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
       pdf.addImage(logoBase64, 'JPEG', 10, 10, imgWidth, imgHeight);
     }
   } else if (document.getElementById("perfilIndividual").checked) {
     datosEmisor = {
       tipoPerfil: "individual",
-      nombre: document.getElementById("nombreIndividual").value,
-      direccion: document.getElementById("direccionIndividual").value,
-      telefono: document.getElementById("telefonoIndividual").value,
+      nombre: document.getElementById("nombreIndividual").value || "(No se proporcionó)",
+      direccion: document.getElementById("direccionIndividual").value || "(No se proporcionó)",
+      telefono: document.getElementById("telefonoIndividual").value || "(No se proporcionó)",
     };
   }
 
+  // Lógica condicional para el texto del recibo
+  if (tipoAsociado === "tipoAsociadoCliente") {
+    tituloDocumento = `${tituloRecibo} (Recibo) `;
+    textoRecibo = `Recibí de ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
+  } else if (tipoAsociado === "tipoAsociadoProveedor") {
+    tituloDocumento = `${tituloRecibo} (Nota de entrega) `;
+    textoRecibo = `Entregué a ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
+  }
+
+  // Obtener el ancho de la página para centrar el texto
+  const pageWidth = pdf.internal.pageSize.getWidth();
+
   // Agregar contenido al PDF
   pdf.setFontSize(18);
-  pdf.text("Recibo", 10, 30);
+  const textWidth = pdf.getTextWidth(tituloDocumento);
+  pdf.text(tituloDocumento, (pageWidth - textWidth) / 2, 50); // Centrar el texto del título
+
   pdf.setFontSize(12);
-  pdf.text(`Título: ${tituloRecibo}`, 10, 40);
-  pdf.text(`Fecha: ${fechaRecibo}`, 10, 50);
-  pdf.text(`Cliente: ${nombreCliente}`, 10, 60);
-  pdf.text(`Dirección: ${direccionCliente}`, 10, 70);
-  pdf.text(`Teléfono: ${telefonoCliente}`, 10, 80);
-  pdf.text(`Concepto: ${conceptoRecibo}`, 10, 90);
-  pdf.text(`Cantidad: ${cantidadRecibo} ${selectMoneda}`, 10, 100);
+  pdf.text(`Fecha: ${fechaRecibo}`, pageWidth - pdf.getTextWidth(`Fecha: ${fechaRecibo}`) - 10, 65); // Justificar la fecha a la derecha
 
-  pdf.text(`Emitido por:`, 10, 110);
-  pdf.text(`Nombre: ${datosEmisor.nombre}`, 10, 120);
-  pdf.text(`Dirección: ${datosEmisor.direccion}`, 10, 130);
-  pdf.text(`Teléfono: ${datosEmisor.telefono}`, 10, 140);
+  // Crear el párrafo con la información del recibo
+  const parrafoRecibo = `
+  Emitido por:
+  Nombre: ${datosEmisor.nombre}
+  Dirección: ${datosEmisor.direccion}
+  Teléfono: ${datosEmisor.telefono}
+  ${datosEmisor.tipoPerfil === "empresa" ? `Código Empresa: ${datosEmisor.codigoEmpresa}` : ""}
+  
+  ${textoRecibo}
 
-  if (datosEmisor.tipoPerfil === "empresa") {
-    pdf.text(`Código Empresa: ${datosEmisor.codigoEmpresa}`, 10, 150);
-  }
+  Dirección del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${direccionCliente}
+  Teléfono del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${telefonoCliente}
+  `;
+
+  // Agregar el párrafo al PDF
+  pdf.text(parrafoRecibo, 10, 80); // Mover el texto hacia abajo para separarlo del título
 
   // Agregar firma al PDF
   if (firmaURL) {
     const imgProps = pdf.getImageProperties(firmaURL);
-    const imgWidth = 50; // Ajusta el tamaño de la imagen de la firma si es necesario
+    const imgWidth = 80; // Ajusta el tamaño de la imagen de la firma
     const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    pdf.addImage(firmaURL, 'JPEG', 10, 160, imgWidth, imgHeight);
+    pdf.addImage(firmaURL, 'JPEG', (pageWidth - imgWidth) / 2, 160, imgWidth, imgHeight); // Separar verticalmente la firma de la información principal
   }
 
   // Generar el PDF como un Blob
@@ -330,38 +348,54 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
       const storagePath = `Usuarios/${user.uid}/Recibos/${Date.now()}.pdf`;
       const storageRef = ref(storage, storagePath);
 
-      // Subir el PDF a Firebase Storage
-      const snapshot = await uploadBytes(storageRef, pdfBlob);
+      // Subir el PDF a Firebase Storage con seguimiento del progreso
+      const uploadTask = uploadBytesResumable(storageRef, pdfBlob);
 
-      // Obtener la URL de descarga del PDF
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          // Obtener el progreso de la subida
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+          showMessage(`Carga en progreso: ${progress.toFixed(2)}%`, "warning");
+        }, 
+        (error) => {
+          console.error("Error al subir el archivo:", error);
+          showMessage("Error al subir el archivo", "error");
+        }, 
+        async () => {
+          // Obtener la URL de descarga del PDF
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-      // Obtener una referencia al documento del usuario
-      const userDocRef = doc(db, "Usuarios", user.uid);
+          // Obtener una referencia al documento del usuario
+          const userDocRef = doc(db, "Usuarios", user.uid);
 
-      // Guardar la URL del PDF en Firestore
-      const reciboData = {
-        tituloRecibo: document.getElementById("tituloRecibo").value,
-        nombreCliente: document.getElementById("nombreCliente").value,
-        direccionCliente: document.getElementById("direccionCliente").value,
-        telefonoCliente: document.getElementById("telefonoCliente").value,
-        fechaRecibo: document.getElementById("fechaRecibo").value,
-        conceptoRecibo: document.getElementById("conceptoRecibo").value,
-        cantidadRecibo: document.getElementById("cantidadRecibo").value,
-        selectMoneda: document.getElementById("selectMoneda").value,
-        firmaURL: getSignatureImage(),
-        pdfURL: downloadURL,
-        datosEmisor: {
-          nombre: document.getElementById("nombreIndividual").value || document.getElementById("nombreEmpresa").value,
-          direccion: document.getElementById("direccionIndividual").value || document.getElementById("direccionEmpresa").value,
-          telefono: document.getElementById("telefonoIndividual").value || document.getElementById("telefonoEmpresa").value,
+          // Guardar la URL del PDF en Firestore
+          const reciboData = {
+            tituloRecibo: document.getElementById("tituloRecibo").value,
+            nombreCliente: document.getElementById("nombreCliente").value,
+            direccionCliente: document.getElementById("direccionCliente").value,
+            telefonoCliente: document.getElementById("telefonoCliente").value,
+            fechaRecibo: document.getElementById("fechaRecibo").value,
+            conceptoRecibo: document.getElementById("conceptoRecibo").value,
+            cantidadRecibo: document.getElementById("cantidadRecibo").value,
+            selectMoneda: document.getElementById("selectMoneda").value,
+            tipoAsociado: document.getElementById("tipoAsociado").value,
+            firmaURL: getSignatureImage(),
+            pdfURL: downloadURL,
+            datosEmisor: {
+              nombre: document.getElementById("nombreIndividual").value || document.getElementById("nombreEmpresa").value,
+              direccion: document.getElementById("direccionIndividual").value || document.getElementById("direccionEmpresa").value,
+              telefono: document.getElementById("telefonoIndividual").value || document.getElementById("telefonoEmpresa").value,
+            }
+          };
+
+          // Agregar un nuevo documento a la subcolección "Recibos"
+          await addDoc(collection(userDocRef, "Recibos"), reciboData);
+
+          showMessage("Recibo creado exitosamente", "success");
+          vaciarCamposFormulario();
         }
-      };
-
-      // Agregar un nuevo documento a la subcolección "Recibos"
-      await addDoc(collection(userDocRef, "Recibos"), reciboData);
-
-      showMessage("Recibo creado exitosamente", "success");
+      );
     } else {
       console.error("Usuario no autenticado");
       showMessage("Usuario no autenticado", "error");
@@ -370,6 +404,28 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
     console.error("Error al guardar el recibo:", error);
     showMessage("Error al guardar el recibo", "error");
   }
+}
+
+// Función para vaciar los campos del formulario
+function vaciarCamposFormulario() {
+  document.getElementById("tituloRecibo").value = "";
+  document.getElementById("nombreCliente").value = "";
+  document.getElementById("direccionCliente").value = "";
+  document.getElementById("telefonoCliente").value = "";
+  document.getElementById("fechaRecibo").value = "";
+  document.getElementById("conceptoRecibo").value = "";
+  document.getElementById("cantidadRecibo").value = "";
+  document.getElementById("selectMoneda").value = "";
+  document.getElementById("tipoAsociado").value = "";
+  document.getElementById("nombreIndividual").value = "";
+  document.getElementById("direccionIndividual").value = "";
+  document.getElementById("telefonoIndividual").value = "";
+  document.getElementById("nombreEmpresa").value = "";
+  document.getElementById("direccionEmpresa").value = "";
+  document.getElementById("telefonoEmpresa").value = "";
+  document.getElementById("codigoEmpresa").value = "";
+  document.getElementById("logoEmpresa").value = "";
+  clearCanvas();
 }
 
 // Evento para el botón "Crear Recibo" que llama a la función generarPDF al hacer clic

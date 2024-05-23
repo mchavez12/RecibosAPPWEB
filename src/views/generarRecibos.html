@@ -37,10 +37,10 @@
 
   <main>
     <div class="container mt-2">
-      <h1 class="main mt-3 mb-5 text-center" style="color: grey;">Generación de Recibos</h1>
+      <h1 class="main mt-3 mb-5 text-center" style="color: grey;">Generación de Recibos / Notas de entrega</h1>
       <form>
         <div class="form-group mt-2">
-          <label for="tituloRecibo"><i class="bi bi-pencil"></i> Título del Recibo</label>
+          <label for="tituloRecibo"><i class="bi bi-pencil"></i> Título del Recibo / Nota de entrega</label>
           <input type="text" class="form-control" id="tituloRecibo" placeholder="Nombre con el que se guardará su recibo" required>
         </div>
 
@@ -144,13 +144,13 @@
 
 
         <div class="form-group mt-4">
-          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del recibo</div>
-          <label for="fechaRecibo"><i class="bi bi-calendar-date"></i> Fecha del Recibo</label>
+          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del recibo / Nota de entrega </div>
+          <label for="fechaRecibo"><i class="bi bi-calendar-date"></i> Fecha del Recibo / Nota de entrega (MM/DD/AAAA)</label>
           <input type="date" class="form-control" id="fechaRecibo" value="<?php echo date('Y-m-d'); ?>" required>
         </div>
         
         <div class="form-group mt-4">
-          <i class="bi bi-file-text"><label for="conceptoRecibo"></i> Concepto del Recibo</label>
+          <i class="bi bi-file-text"><label for="conceptoRecibo"></i> Concepto del Recibo / Nota de entrega</label>
           <textarea class="form-control" id="conceptoRecibo" rows="3"
             placeholder="Para que el baboson compre un pollo loco"></textarea>
         </div>
@@ -312,7 +312,7 @@
             <button type="button" class="btn btn-danger" id="clearButton"><i class="bi bi-x-circle"></i> Borrar firma</button>
           </div>
 
-          <button type="submit" id="btnCrearRecibo" class="btn btn-primary mt-4"><i class="bi bi-file-plus"></i> Crear Recibo</button>
+          <button type="submit" id="btnCrearRecibo" class="btn btn-primary mt-4"><i class="bi bi-file-plus"></i> Crear Recibo / Nota de entrega</button>
         </div>
       </form>
     </div>
