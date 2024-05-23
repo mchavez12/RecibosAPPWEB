@@ -156,9 +156,33 @@
         </div>
 
         <div class="form-group mt-4">
-        <i class="bi bi-123"><label for="cantidadRecibo"></i> Cantidad de Dinero</label>
-        <input type="text" class="form-control" id="cantidadRecibo" placeholder="250.00" required>
-        </div>
+          <label for="cantidadRecibo">Cantidad de Dinero</label>
+          <div class="input-group">
+              <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+              </div>
+              <input type="text" class="form-control" id="cantidadRecibo" placeholder="250.00" required>
+          </div>
+      </div>
+      
+      <script>
+          // Obtener el campo de entrada
+          const cantidadInput = document.getElementById('cantidadRecibo');
+      
+          // Función para formatear el valor del campo de entrada
+          cantidadInput.addEventListener('input', function(event) {
+              // Obtener el valor actual del campo
+              let valor = event.target.value;
+      
+              // Eliminar todos los caracteres no numéricos excepto los números y el punto decimal
+              valor = valor.replace(/[^\d.]/g, '');
+      
+              // Actualizar el valor del campo de entrada
+              event.target.value = valor;
+          });
+      </script>
+      
+        
 
         <div class="form-group mt-4">
           <label for="selectMoneda"><i class="bi bi-coin"></i> Moneda</label>
@@ -245,7 +269,6 @@
 
              <div class="mb-3 text-center" style="text-align: center;">
               <label for="logoEmpresa" class="form-label">Logotipo de la empresa</label>
-
               <input
                 class="form-control"
                 type="file"
@@ -330,6 +353,9 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
 
 </body>
 </html>

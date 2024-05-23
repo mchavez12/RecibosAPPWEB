@@ -38,97 +38,6 @@ function togglePerfilVisibility() {
   }
 }
 
-// Función para cargar el perfil desde Firestore y autocompletar el formulario
-async function cargarPerfil() {
-  try {
-    const user = auth.currentUser;
-
-    if (user) {
-      console.log("Usuario autenticado:", user.uid);
-
-      // Genera la ruta de Firebase Storage para el logotipo del perfil
-      const storagePath = `Usuarios/${user.uid}/logoPerfil/logo_empresa.jpg`;
-      const storage = getStorage();
-      const storageRef = ref(storage, storagePath);
-
-      const logoPreview = document.getElementById("logoEmpresaPreview");
-      const btnBorrarImagen = document.getElementById("borrarImagen"); // Obtiene el botón de borrar imagen
-
-      if (!logoPreview) {
-        console.error("Element 'logoEmpresaPreview' no encontrado.");
-        showMessage("Error: 'logoEmpresaPreview' no está definido", "error");
-        return;
-      }
-
-      try {
-        // Obtiene la URL de descarga desde Firebase Storage
-        const downloadURL = await getDownloadURL(storageRef);
-
-        // Asigna la URL al elemento de vista previa para mostrar la imagen
-        logoPreview.src = downloadURL;
-        logoPreview.style.display = "block"; // Asegúrate de que esté visible
-        console.log("Logotipo del perfil cargado desde:", downloadURL);
-
-        if (btnBorrarImagen) {
-          // Si el botón de borrar imagen existe, hazlo visible
-          btnBorrarImagen.style.display = "inline-block"; // Cambia el estilo para mostrarlo
-        }
-
-        
-      } catch (error) {
-        console.error("No se encontró un logotipo de perfil para este usuario.");
-        showMessage("No se encontró un logotipo de perfil", "info");
-        logoPreview.style.display = "none"; // Oculta la vista previa si no hay logotipo
-        if (btnBorrarImagen) {
-          btnBorrarImagen.style.display = "none"; // Mantiene el botón oculto si no hay imagen
-        }
-      }
-
-      // Resto del código para cargar datos del perfil...
-      const userDocRef = doc(db, "Usuarios", user.uid);
-      const perfilCollectionRef = collection(userDocRef, "Perfil");
-      const perfilDocRef = doc(perfilCollectionRef, "perfil_usuario");
-      const perfilDocSnap = await getDoc(perfilDocRef);
-
-      if (perfilDocSnap.exists()) {
-        const perfilData = perfilDocSnap.data();
-        
-        // Código para cargar datos según el tipo de perfil...
-        if (perfilData.tipo === "empresa") {
-          document.getElementById("perfilEmpresa").checked = true;
-          togglePerfilVisibility();
-          document.getElementById("nombreEmpresa").value = perfilData.nombreEmpresa || "";
-          document.getElementById("direccionEmpresa").value = perfilData.direccionEmpresa || "";
-          document.getElementById("telefonoEmpresa").value = perfilData.telefonoEmpresa || "";
-          document.getElementById("codigoEmpresa").value = perfilData.codigoEmpresa || "";
-        } else if (perfilData.tipo === "individual") {
-          document.getElementById("perfilIndividual").checked = true;
-          togglePerfilVisibility();
-          document.getElementById("nombreIndividual").value = perfilData.nombre || "";
-          document.getElementById("direccionIndividual").value = perfilData.direccion || "";
-          document.getElementById("telefonoIndividual").value = perfilData.telefono || "";
-        }
-
-        showMessage("Perfil cargado con éxito", "success");
-        
-      } else {
-        console.log("Perfil no encontrado");
-        showMessage("Perfil no encontrado", "info");
-      }
-      
-    } else {
-      console.error("Usuario no autenticado");
-      showMessage("Usuario no autenticado", "error");
-    }
-  } catch (error) {
-    console.error("Error al cargar el perfil:", error);
-    showMessage("Error al cargar el perfil", "error");
-  }
-}
-
-
-let clienteSeleccionado = null;
-
 async function buscarClientes() {
   const campoBusqueda = document
     .getElementById("campoBusquedaCliente")
@@ -214,6 +123,57 @@ function guardarCliente() {
   }
 }
 
+let clienteSeleccionado = null;
+
+async function cargarPerfil() {
+  try {
+    const user = auth.currentUser;
+
+    if (user) {
+      console.log("Usuario autenticado:", user.uid);
+
+      // Resto del código para cargar datos del perfil...
+      const userDocRef = doc(db, "Usuarios", user.uid);
+      const perfilCollectionRef = collection(userDocRef, "Perfil");
+      const perfilDocRef = doc(perfilCollectionRef, "perfil_usuario");
+      const perfilDocSnap = await getDoc(perfilDocRef);
+
+      if (perfilDocSnap.exists()) {
+        const perfilData = perfilDocSnap.data();
+        
+        // Código para cargar datos según el tipo de perfil...
+        if (perfilData.tipo === "empresa") {
+          document.getElementById("perfilEmpresa").checked = true;
+          togglePerfilVisibility();
+          document.getElementById("nombreEmpresa").value = perfilData.nombreEmpresa || "";
+          document.getElementById("direccionEmpresa").value = perfilData.direccionEmpresa || "";
+          document.getElementById("telefonoEmpresa").value = perfilData.telefonoEmpresa || "";
+          document.getElementById("codigoEmpresa").value = perfilData.codigoEmpresa || "";
+        } else if (perfilData.tipo === "individual") {
+          document.getElementById("perfilIndividual").checked = true;
+          togglePerfilVisibility();
+          document.getElementById("nombreIndividual").value = perfilData.nombre || "";
+          document.getElementById("direccionIndividual").value = perfilData.direccion || "";
+          document.getElementById("telefonoIndividual").value = perfilData.telefono || "";
+        }
+        showMessage("Perfil cargado con éxito", "success");
+
+        
+      } else {
+        console.log("Perfil no encontrado");
+        showMessage("Perfil no encontrado", "info");
+      }
+      
+    } else {
+      console.error("Usuario no autenticado");
+      showMessage("Usuario no autenticado", "error");
+    }
+  } catch (error) {
+    console.error("Error al cargar el perfil:", error);
+    showMessage("Error al cargar el perfil", "error");
+  }
+}
+
 const { jsPDF } = window.jspdf;
 const signatureCanvas = document.getElementById("signatureCanvas");
 const clearButton = document.getElementById("clearButton");
@@ -244,9 +204,12 @@ function fileToBase64(file) {
 
 // Función para generar el PDF y convertirlo a Blob
 async function generarPDF() {
+  if (!(await validarCampos())) {
+    return; 
+  }
   const pdf = new jsPDF();
 
-  const tituloRecibo = document.getElementById("tituloRecibo").value || "(Recibo / Nota de entrega)"
+  const tituloRecibo = document.getElementById("tituloRecibo").value || "(Recibo / Nota de entrega)";
   const nombreCliente = document.getElementById("nombreCliente").value || "(No se proporcionó)";
   const direccionCliente = document.getElementById("direccionCliente").value || "(No se proporcionó)";
   const telefonoCliente = document.getElementById("telefonoCliente").value || "(No se proporcionó)";
@@ -269,12 +232,11 @@ async function generarPDF() {
       telefono: document.getElementById("telefonoEmpresa").value || "(No se proporcionó)",
       codigoEmpresa: document.getElementById("codigoEmpresa").value || "(No se proporcionó)",
     };
-    // Cargar la imagen del logo en caso de que sea empresa
     const logoFile = document.getElementById("logoEmpresa").files[0];
     if (logoFile) {
       const logoBase64 = await fileToBase64(logoFile);
       const imgProps = pdf.getImageProperties(logoBase64);
-      const imgWidth = 30; // Ajusta el tamaño de la imagen del logo a un tamaño pequeño
+      const imgWidth = 30;
       const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
       pdf.addImage(logoBase64, 'JPEG', 10, 10, imgWidth, imgHeight);
     }
@@ -287,7 +249,6 @@ async function generarPDF() {
     };
   }
 
-  // Lógica condicional para el texto del recibo
   if (tipoAsociado === "tipoAsociadoCliente") {
     tituloDocumento = `${tituloRecibo} (Recibo) `;
     textoRecibo = `Recibí de ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
@@ -296,18 +257,15 @@ async function generarPDF() {
     textoRecibo = `Entregué a ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
   }
 
-  // Obtener el ancho de la página para centrar el texto
   const pageWidth = pdf.internal.pageSize.getWidth();
 
-  // Agregar contenido al PDF
   pdf.setFontSize(18);
   const textWidth = pdf.getTextWidth(tituloDocumento);
-  pdf.text(tituloDocumento, (pageWidth - textWidth) / 2, 50); // Centrar el texto del título
+  pdf.text(tituloDocumento, (pageWidth - textWidth) / 2, 50);
 
   pdf.setFontSize(12);
-  pdf.text(`Fecha: ${fechaRecibo}`, pageWidth - pdf.getTextWidth(`Fecha: ${fechaRecibo}`) - 10, 65); // Justificar la fecha a la derecha
+  pdf.text(`Fecha: ${fechaRecibo}`, pageWidth - pdf.getTextWidth(`Fecha: ${fechaRecibo}`) - 10, 65);
 
-  // Crear el párrafo con la información del recibo
   const parrafoRecibo = `
   Emitido por:
   Nombre: ${datosEmisor.nombre}
@@ -321,23 +279,58 @@ async function generarPDF() {
   Teléfono del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${telefonoCliente}
   `;
 
-  // Agregar el párrafo al PDF
-  pdf.text(parrafoRecibo, 10, 80); // Mover el texto hacia abajo para separarlo del título
+  // Dividir el párrafo en líneas que quepan dentro del ancho de la página
+  const lineasParrafo = pdf.splitTextToSize(parrafoRecibo, pageWidth - 20);
 
-  // Agregar firma al PDF
+  // Agregar las líneas del párrafo al PDF
+  pdf.text(lineasParrafo, 10, 80);
+
   if (firmaURL) {
     const imgProps = pdf.getImageProperties(firmaURL);
-    const imgWidth = 80; // Ajusta el tamaño de la imagen de la firma
+    const imgWidth = 80;
     const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    pdf.addImage(firmaURL, 'JPEG', (pageWidth - imgWidth) / 2, 160, imgWidth, imgHeight); // Separar verticalmente la firma de la información principal
+    pdf.addImage(firmaURL, 'JPEG', (pageWidth - imgWidth) / 2, 160, imgWidth, imgHeight);
   }
 
-  // Generar el PDF como un Blob
   const pdfBlob = pdf.output('blob');
-
-  // Guardar el PDF en Firebase Storage
   await guardarReciboPDFEnFirestore(pdfBlob);
 }
+
+
+async function validarCampos() {
+  const tituloRecibo = document.getElementById("tituloRecibo").value;
+  const nombreCliente = document.getElementById("nombreCliente").value;
+  const tipoAsociado = document.getElementById("tipoAsociado").value;
+  const fechaRecibo = document.getElementById("fechaRecibo").value;
+  const cantidadRecibo = document.getElementById("cantidadRecibo").value;
+  const selectMoneda = document.getElementById("selectMoneda").value;
+
+  let nombreEmisor;
+  let camposFaltantes = [];
+
+  if (document.getElementById("perfilEmpresa").checked) {
+    nombreEmisor = document.getElementById("nombreEmpresa").value;
+  } else if (document.getElementById("perfilIndividual").checked) {
+    nombreEmisor = document.getElementById("nombreIndividual").value;
+  }
+
+  if (!tituloRecibo) camposFaltantes.push("Título del recibo");
+  if (!nombreCliente) camposFaltantes.push("Nombre del cliente");
+  if (!tipoAsociado) camposFaltantes.push("Tipo de asociado");
+  if (!fechaRecibo) camposFaltantes.push("Fecha del recibo");
+  if (!cantidadRecibo) camposFaltantes.push("Cantidad");
+  if (!selectMoneda) camposFaltantes.push("Moneda");
+  if (!nombreEmisor) camposFaltantes.push("Nombre del emisor");
+
+  if (camposFaltantes.length > 0) {
+    showMessage(`Por favor complete los siguientes campos: ${camposFaltantes.join(", ")}`, "warning");
+    return false;
+  }
+
+  return true;
+}
+
+
 
 // Función para guardar el PDF en Firebase Storage y almacenar la URL en Firestore
 async function guardarReciboPDFEnFirestore(pdfBlob) {
@@ -393,6 +386,13 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
           await addDoc(collection(userDocRef, "Recibos"), reciboData);
 
           showMessage("Recibo creado exitosamente", "success");
+          reproducirEfectoSonido();
+
+          confetti({
+            particleCount: 300,
+            spread: 150,
+            origin: { y: 0.8 }
+          });
           vaciarCamposFormulario();
         }
       );
@@ -406,27 +406,41 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
   }
 }
 
+function reproducirEfectoSonido() {
+  const audio = new Audio('../../../resources/EfectoSonidoKid.mp3'); 
+  audio.play();
+}
+
 // Función para vaciar los campos del formulario
 function vaciarCamposFormulario() {
-  document.getElementById("tituloRecibo").value = "";
-  document.getElementById("nombreCliente").value = "";
-  document.getElementById("direccionCliente").value = "";
-  document.getElementById("telefonoCliente").value = "";
-  document.getElementById("fechaRecibo").value = "";
-  document.getElementById("conceptoRecibo").value = "";
-  document.getElementById("cantidadRecibo").value = "";
-  document.getElementById("selectMoneda").value = "";
-  document.getElementById("tipoAsociado").value = "";
-  document.getElementById("nombreIndividual").value = "";
-  document.getElementById("direccionIndividual").value = "";
-  document.getElementById("telefonoIndividual").value = "";
-  document.getElementById("nombreEmpresa").value = "";
-  document.getElementById("direccionEmpresa").value = "";
-  document.getElementById("telefonoEmpresa").value = "";
-  document.getElementById("codigoEmpresa").value = "";
-  document.getElementById("logoEmpresa").value = "";
-  clearCanvas();
+  setTimeout(() => {
+    document.getElementById("tituloRecibo").value = "";
+    document.getElementById("nombreCliente").value = "";
+    document.getElementById("direccionCliente").value = "";
+    document.getElementById("telefonoCliente").value = "";
+    document.getElementById("fechaRecibo").value = "";
+    document.getElementById("conceptoRecibo").value = "";
+    document.getElementById("cantidadRecibo").value = "";
+    document.getElementById("selectMoneda").value = "";
+    document.getElementById("tipoAsociado").value = "";
+    document.getElementById("nombreIndividual").value = "";
+    document.getElementById("direccionIndividual").value = "";
+    document.getElementById("telefonoIndividual").value = "";
+    document.getElementById("nombreEmpresa").value = "";
+    document.getElementById("direccionEmpresa").value = "";
+    document.getElementById("telefonoEmpresa").value = "";
+    document.getElementById("codigoEmpresa").value = "";
+    document.getElementById("logoEmpresa").value = "";
+    document.getElementById("logoEmpresaPreview").value = "";
+    clearCanvas();
+    // Recargar la página después de dos segundos
+    setTimeout(() => {
+      window.scrollTo(0, 0); // Desplazarse al principio de la página
+      window.location.reload();
+    }, 2000);
+  }, 2000);
 }
+
 
 // Evento para el botón "Crear Recibo" que llama a la función generarPDF al hacer clic
 document.addEventListener("DOMContentLoaded", function () {
