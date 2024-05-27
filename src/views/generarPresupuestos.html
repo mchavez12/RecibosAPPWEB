@@ -4,20 +4,20 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generar recibos</title>
+  <title>Generar presupuestos</title>
   <link rel="icon" type="image/x-icon" href="../../resources/logo.ico" />
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="../main.css" />
-  <script src="../mainRecibos.js" type="module"></script>
+  <script src="../mainPresupuestos.js" type="module"></script>
 
   <!-- Script de Signature Pad -->
 </head>
 <body>
   <header data-bs-theme="dark">
-    <nav class="navbar navbar-expand-md navbar-dark sticky-top" style="background-color: #278cd3">
+    <nav class="navbar navbar-expand-md navbar-dark sticky-top" style="background-color: #e9d044">
       <div class="container">
         <a class="navbar-brand" href="./panelPrincipal.html">ReciboRisitas</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -37,155 +37,121 @@
 
   <main>
     <div class="container mt-2">
-      <h1 class="main mt-3 mb-5 text-center" style="color: grey;">Generación de Recibos / Notas de entrega</h1>
+      <h1 class="main mt-3 mb-5 text-center" style="color: grey;">Generación de Presupuestos</h1>
+      <p class="text-start" style="color: red;">* = obligatorio</p>
       <form>
         <div class="form-group mt-2">
-          <label for="tituloRecibo"><i class="bi bi-pencil"></i> Título del Recibo / Nota de entrega</label>
-          <input type="text" class="form-control" id="tituloRecibo" placeholder="Nombre con el que se guardará su recibo" required>
+          <label for="tituloPresupuesto"><i class="bi bi-pencil"></i> Título del Presupuesto <span style="color: red;">*</span></label>
+          <input type="text" class="form-control" id="tituloPresupuesto" placeholder="Nombre con el que se guardará su presupuesto" required>
         </div>
 
         <!-- ########## Sección de datos del receptor 1 ################## -->
         <div class="mt-4">
-          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del receptor</div>
-          <!-- Usando la clase btn de Bootstrap para que luzca como un botón -->
+          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del cliente</div>
 
           <a
-          class="btn btn-primary"
-          style="background-color: #278cd3;"
-          href="#"
-          data-bs-toggle="modal"
-          data-bs-target="#modalCliente"
-          > <i class="bi bi-search"></i>
-          Buscar cliente guardado
+            class="btn btn-warning"
+            style="background-color: #e9d044;"
+            href="#"
+            data-bs-toggle="modal"
+            data-bs-target="#modalCliente"
+            > <i class="bi bi-search"></i>
+            Buscar cliente guardado
           </a>
+
           <!-- Modal para mostrar la lista de clientes -->
-
           <div
-  class="modal fade"
-  id="modalCliente"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content bg-light text-dark">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">
-          Buscar cliente por nombre
-        </h1>
-        <button
-          type="button"
-          class="btn-close btn-close-black"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <!-- Campo de entrada para escribir el nombre del cliente -->
-        <div class="text-secondary" style="font-style: italic;">¡Recuerda que puedes consultar el nombre del cliente en la herramienta de Clientes!</div>
-        <input
-          type="text"
-          class="form-control mt-3"
-          id="campoBusquedaCliente"
-          placeholder="Ingresa el nombre del cliente"
-        />
+            class="modal fade"
+            id="modalCliente"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content bg-light text-dark">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Buscar cliente por nombre
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-black"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <!-- Campo de entrada para escribir el nombre del cliente -->
+                  <div class="text-secondary" style="font-style: italic;">¡Recuerda que puedes consultar el nombre del cliente en la herramienta de Clientes!</div>
+                  <input
+                    type="text"
+                    class="form-control mt-3"
+                    id="campoBusquedaCliente"
+                    placeholder="Ingresa el nombre del cliente"
+                  />
 
-        <!-- Botón para iniciar la búsqueda -->
-        <button
-          class="btn btn-primary mt-3"
-          id="botonBuscarCliente"
-          type="button"
-        >
-          Buscar
-        </button>
+                  <!-- Botón para iniciar la búsqueda -->
+                  <button
+                    class="btn btn-primary mt-3"
+                    id="botonBuscarCliente"
+                    type="button"
+                  >
+                    Buscar
+                  </button>
 
-        <ul id="resultadosClientes" class="list-group mt-3">
-          <!-- RESULTADOS DE LA BUSQUEDA -->
-        </ul>
+                  <ul id="resultadosClientes" class="list-group mt-3">
+                    <!-- RESULTADOS DE LA BUSQUEDA -->
+                  </ul>
 
-        <button
-          class="btn btn-success mt-3"
-          id="botonGuardarCliente"
-          type="button"
-          style="display: none;"
-        >
-          Guardar información del cliente
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+                  <button
+                    class="btn btn-success mt-3"
+                    id="botonGuardarCliente"
+                    type="button"
+                    style="display: none;"
+                  >
+                    Guardar información del cliente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="form-group mt-4">
-            <label for="nombreCliente"><i class="bi bi-person-circle"></i> Nombre del cliente/proveedor</label>
+            <label for="nombreCliente"><i class="bi bi-person-circle"></i> Nombre del cliente<span style="color: red;">*</span></label>
             <div class="input-group">
-              <input type="text" class="form-control" id="nombreCliente" placeholder="Antonio / Ballenitas S.A de C.V">
+              <input type="text" class="form-control" id="nombreCliente" placeholder="Antonio / Ballenitas S.A de C.V" required>
             </div>
-          </div>      
-          <div class="form-group mt-2">
-            <label for="tipoAsociado"><i class="bi bi-person-badge"></i> Tipo de receptor</label>
-            <select class="form-control" id="tipoAsociado" required>
-              <option value="">...</option>
-              <option value="tipoAsociadoCliente">Cliente (Recibí)</option>
-              <option value="tipoAsociadoProveedor">Proveedor (Entregué)</option>
-            </select>
           </div>
+               
           <div class="form-group mt-4">
             <label para "direccionCliente"><i class="bi bi-house"></i> Dirección</label>
-            <input type="text" class="form-control" id="direccionCliente" placeholder="La dirección que aparecerá en su recibo" required>
+            <input type="text" class="form-control" id="direccionCliente" placeholder="La dirección que aparecerá en su presupuesto" required>
           </div>
           <div class="form-group mt-4">
             <label para "telefonoCliente"><i class="bi bi-telephone"></i> Teléfono</label>
             <input type="tel" class="form-control" id="telefonoCliente" placeholder="1234567890" required>
           </div>
-        </div>
-
-
-        <div class="form-group mt-4">
-          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del recibo / Nota de entrega </div>
-          <label for="fechaRecibo"><i class="bi bi-calendar-date"></i> Fecha del Recibo / Nota de entrega (MM/DD/AAAA)</label>
-          <input type="date" class="form-control" id="fechaRecibo" value="<?php echo date('Y-m-d'); ?>" required>
-        </div>
-        
-        <div class="form-group mt-4">
-          <i class="bi bi-file-text"><label for="conceptoRecibo"></i> Concepto del Recibo / Nota de entrega</label>
-          <textarea class="form-control" id="conceptoRecibo" rows="3"
-            placeholder="Para que el baboson compre un pollo loco"></textarea>
-        </div>
-
-        <div class="form-group mt-4">
-          <label for="cantidadRecibo">Cantidad de Dinero</label>
-          <div class="input-group">
-              <div class="input-group-prepend">
-                  <span class="input-group-text">$</span>
-              </div>
-              <input type="text" class="form-control" id="cantidadRecibo" placeholder="250.00" required>
+          <div class="form-group mt-4">
+            <label para "emailCliente"><i class="bi bi-envelope"></i> Correo electrónico</label>
+            <input type="tel" class="form-control" id="emailCliente" placeholder="alguien@email.com" required>
           </div>
-      </div>
-      
-      <script>
-          // Obtener el campo de entrada
-          const cantidadInput = document.getElementById('cantidadRecibo');
-      
-          // Función para formatear el valor del campo de entrada
-          cantidadInput.addEventListener('input', function(event) {
-              // Obtener el valor actual del campo
-              let valor = event.target.value;
-      
-              // Eliminar todos los caracteres no numéricos excepto los números y el punto decimal
-              valor = valor.replace(/[^\d.]/g, '');
-      
-              // Actualizar el valor del campo de entrada
-              event.target.value = valor;
-          });
-      </script>
-      
-        
+        </div>
+
 
         <div class="form-group mt-4">
-          <label for="selectMoneda"><i class="bi bi-coin"></i> Moneda</label>
+          <div class="main mb-2"><i class="bi bi-info-square"></i> Datos del presupuesto </div>
+          <label for="fechaPresupuesto"><i class="bi bi-calendar-date"></i> Fecha del presupuesto (MM/DD/AAAA) <span style="color: red;">*</span></label>
+          <input type="date" class="form-control" id="fechaPresupuesto" value="<?php echo date('Y-m-d'); ?>" required>
+        </div>
+        
+        <div class="form-group mt-4">
+          <i class="bi bi-file-text"><label for="conceptoPresupuesto"></i> Concepto del presupuesto</label>
+          <textarea class="form-control" id="conceptoPresupuesto" rows="3"
+            placeholder="Para que el baboson compre un pollo loco"></textarea>
+        </div> 
+        
+        <div class="form-group mt-4">
+          <label for="selectMoneda"><i class="bi bi-coin"></i> Moneda <span style="color: red;">*</span></label>
           <select class="form-control" id="selectMoneda" required>
             <option value="">Seleccionar moneda</option>
             <option value="USD">Dólar estadounidense (USD)</option>
@@ -200,12 +166,56 @@
           </select>
         </div>
 
+        <div class="form-group mt-4">
+          <label for="nombreProducto">Nombre del Producto/Servicio</label>
+          <input type="text" class="form-control" id="nombreProducto" placeholder="Nombre del Producto/Servicio">
+        </div>
+        <div class="form-group">
+          <label for="cantidad">Cantidad</label>
+          <input type="number" class="form-control" id="cantidad" placeholder="Cantidad">
+        </div>
+        <div class="form-group">
+          <label for="costo">Costo</label>
+          <input type="number" class="form-control" id="costo" placeholder="Costo">
+        </div>
+        <button type="button" class="btn btn-primary" id="agregarProducto">Agregar Producto/Servicio</button>
+        
+        <!-- Tabla de productos o servicios -->
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Costo</th>
+            </tr>
+          </thead>
+          <tbody id="listaProductos">
+            <!-- Los productos o servicios agregados se mostrarán aquí -->
+          </tbody>
+        </table>
+        
 
+        <div class="form-group mt-4">
+          <label for="tiempoEntrega"><i class="bi bi-clock"></i> Tiempo de entrega del trabajo o entrega de productos/servicios</label>
+          <div class="d-flex align-items-center">
+            <input type="number" class="form-control me-2" id="tiempoEntrega" placeholder="30">
+            <span>días</span>
+          </div>
+        </div>
+        
+        <div class="form-group mt-4">
+          <label for="validez"><i class="bi bi-calendar-check"></i> Validez del presupuesto</label>
+          <div class="d-flex align-items-center">
+            <input type="number" class="form-control me-2" id="validez" placeholder="15">
+            <span>días</span>
+          </div>
+        </div>
+        
 
         <div id="datosEmisor" class="mt-5">
           <div class="main"><i class="bi bi-info-square"></i> Datos del emisor</div>
           <div class="form-group mt-4">
-            <button type="button" class="btn btn-primary" style="background-color: #278cd3;" id="mostrarPerfiles"><i class="bi bi-card-list"></i> Seleccionar Perfil Guardado</button>
+            <button type="button" class="btn btn-warning" style="background-color: #e9d044;" id="mostrarPerfiles"><i class="bi bi-card-list"></i> Seleccionar Perfil Guardado</button>
           </div>
           <div class="mt-3 mb-2 d-flex">
             <div class="form-check me-3">
@@ -241,7 +251,7 @@
           <div id="datosEmpresa" style="display: none">
             <div class="mb-3">
               <label for="nombreEmpresa" class="form-label"
-                ><i class="bi bi-building"></i> Nombre de la empresa</label>
+                ><i class="bi bi-building"></i> Nombre de la empresa <span style="color: red;">*</span></label>
               <input
                 type="text"
                 class="form-control"
@@ -301,7 +311,7 @@
           <!-- #################### FORMULARIO INDIVIDUAL -->
           <div id="datosIndividual" style="display: block">
             <div class="mb-3">
-              <label for="nombreIndividual" class="form-label"><i class="bi bi-person"></i> Nombre</label>
+              <label for="nombreIndividual" class="form-label"><i class="bi bi-person"></i> Nombre <span style="color: red;">*</span></label>
               <input
                 type="text"
                 class="form-control"
@@ -327,7 +337,7 @@
           </div>
 
           <div class="form-group mt-4 text-center">
-            <label para "firmaEmisor"><i class="bi bi-vector-pen"></i> Firma del Emisor</label><br>
+            <label para "firmaEmisor"><i class="bi bi-vector-pen"></i> Firma del Emisor <span style="color: red;">*</span></label><br>
             <canvas id="signatureCanvas" width="500" height="300" style="border: 1px solid #000;" aria-required="true"></canvas>
           </div>
           <div class="form-group text-center">
@@ -335,7 +345,7 @@
             <button type="button" class="btn btn-danger" id="clearButton"><i class="bi bi-x-circle"></i> Borrar firma</button>
           </div>
 
-          <button type="submit" id="btnCrearRecibo" class="btn btn-primary mt-4"><i class="bi bi-file-plus"></i> Crear Recibo / Nota de entrega</button>
+          <button type="submit" id="btnCrearPresupuesto" class="btn btn-warning mt-4"><i class="bi bi-file-earmark-spreadsheet"></i> Crear presupuesto</button>
         </div>
       </form>
     </div>
@@ -353,6 +363,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 
 

@@ -76,7 +76,6 @@ async function buscarClientes() {
             <strong>Nombre:</strong> ${datos.nombre}<br>
             <strong>Dirección:</strong> ${datos.direccion}<br>
             <strong>Teléfono:</strong> ${datos.telefono}<br>
-            <strong>Tipo:</strong> ${datos.tipo}
           `;
 
           resultadosElement.appendChild(clienteItem);
@@ -108,10 +107,6 @@ function guardarCliente() {
   if (clienteSeleccionado) {
     // Guardar información del cliente en el formulario principal
     document.getElementById("nombreCliente").value = clienteSeleccionado.nombre;
-    document.getElementById("tipoAsociado").value =
-      clienteSeleccionado.tipo === "Cliente"
-        ? "tipoAsociadoCliente"
-        : "tipoAsociadoProveedor";
     document.getElementById("direccionCliente").value =
       clienteSeleccionado.direccion;
     document.getElementById("telefonoCliente").value =
@@ -177,6 +172,7 @@ async function cargarPerfil() {
 const { jsPDF } = window.jspdf;
 const signatureCanvas = document.getElementById("signatureCanvas");
 const clearButton = document.getElementById("clearButton");
+
 // Evento para borrar la firma
 clearButton.addEventListener("click", function() {
   clearCanvas();
@@ -209,20 +205,20 @@ async function generarPDF() {
   }
   const pdf = new jsPDF();
 
-  const tituloRecibo = document.getElementById("tituloRecibo").value || "(Recibo / Nota de entrega)";
+  const tituloPresupuesto = document.getElementById("tituloPresupuesto").value || "(Presupuesto)";
   const nombreCliente = document.getElementById("nombreCliente").value || "(No se proporcionó)";
   const direccionCliente = document.getElementById("direccionCliente").value || "(No se proporcionó)";
   const telefonoCliente = document.getElementById("telefonoCliente").value || "(No se proporcionó)";
-  const fechaRecibo = document.getElementById("fechaRecibo").value || "(No se proporcionó)";
-  const conceptoRecibo = document.getElementById("conceptoRecibo").value || "(No se proporcionó)";
-  const cantidadRecibo = document.getElementById("cantidadRecibo").value || "(No se proporcionó)";
+  const emailCliente = document.getElementById("emailCliente").value || "(No se proporcionó)";
+  const fechaPresupuesto = document.getElementById("fechaPresupuesto").value || "(No se proporcionó)";
+  const conceptoPresupuesto = document.getElementById("conceptoPresupuesto").value || "(No se proporcionó)";
   const selectMoneda = document.getElementById("selectMoneda").value || "(No se proporcionó)";
-  const tipoAsociado = document.getElementById("tipoAsociado").value || "(No se proporcionó)";
   const firmaURL = getSignatureImage();
+  const tiempoEntrega = document.getElementById("tiempoEntrega").value || "(No se proporcionó)";
+  const validez = document.getElementById("validez").value || "(No se proporcionó)";
 
   let datosEmisor = {};
-  let textoRecibo = "";
-  let tituloDocumento = "";
+  let tituloDocumento = `${tituloPresupuesto} (Presupuesto)`;
 
   if (document.getElementById("perfilEmpresa").checked) {
     datosEmisor = {
@@ -249,61 +245,92 @@ async function generarPDF() {
     };
   }
 
-  if (tipoAsociado === "tipoAsociadoCliente") {
-    tituloDocumento = `${tituloRecibo} (Recibo) `;
-    textoRecibo = `Recibí de ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
-  } else if (tipoAsociado === "tipoAsociadoProveedor") {
-    tituloDocumento = `${tituloRecibo} (Nota de entrega) `;
-    textoRecibo = `Entregué a ${nombreCliente}, la suma de: ${cantidadRecibo} ${selectMoneda}. Por concepto de: ${conceptoRecibo}.`;
-  }
-
   const pageWidth = pdf.internal.pageSize.getWidth();
 
   pdf.setFontSize(18);
   const textWidth = pdf.getTextWidth(tituloDocumento);
-  pdf.text(tituloDocumento, (pageWidth - textWidth) / 2, 50);
+  pdf.text(tituloDocumento, (pageWidth - textWidth) / 2, 20);
 
   pdf.setFontSize(12);
-  pdf.text(`Fecha: ${fechaRecibo}`, pageWidth - pdf.getTextWidth(`Fecha: ${fechaRecibo}`) - 10, 65);
+  pdf.text(`Fecha: ${fechaPresupuesto}`, pageWidth - pdf.getTextWidth(`Fecha: ${fechaPresupuesto}`) - 10, 30);
 
-  const parrafoRecibo = `
-  Emitido por:
-  Nombre: ${datosEmisor.nombre}
-  Dirección: ${datosEmisor.direccion}
-  Teléfono: ${datosEmisor.telefono}
-  ${datosEmisor.tipoPerfil === "empresa" ? `Código Empresa: ${datosEmisor.codigoEmpresa}` : ""}
-  
-  ${textoRecibo}
+  const parrafoPresupuesto = `
+    Emitido por:
+    Nombre: ${datosEmisor.nombre}
+    Dirección: ${datosEmisor.direccion}
+    Teléfono: ${datosEmisor.telefono}
+    ${datosEmisor.tipoPerfil === "empresa" ? `Código Empresa: ${datosEmisor.codigoEmpresa}` : ""}
+      
+    Cliente:
+    Nombre: ${nombreCliente}
+    Dirección: ${direccionCliente}
+    Teléfono: ${telefonoCliente}
+    Email: ${emailCliente}
 
-  Dirección del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${direccionCliente}
-  Teléfono del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${telefonoCliente}
+    Concepto del presupuesto: ${conceptoPresupuesto}
+    Tiempo de entrega: ${tiempoEntrega} días - Validez del presupuesto: ${validez} días
   `;
 
-  // Dividir el párrafo en líneas que quepan dentro del ancho de la página
-  const lineasParrafo = pdf.splitTextToSize(parrafoRecibo, pageWidth - 20);
+  const lineasParrafo = pdf.splitTextToSize(parrafoPresupuesto, pageWidth - 20);
+  pdf.text(lineasParrafo, 10, 40);
 
-  // Agregar las líneas del párrafo al PDF
-  pdf.text(lineasParrafo, 10, 80);
+  const listaProductos = document.getElementById("listaProductos");
+  const productos = [];
+  const items = listaProductos.querySelectorAll("tr");
+
+  const headers = [["Producto/Servicio", "Cantidad", "Costo", "Total"]];
+  const data = [];
+  let costoTotal = 0;
+
+  items.forEach(item => {
+    const nombre = item.querySelector("td:nth-of-type(1)").textContent.trim();
+    const cantidad = parseInt(item.querySelector("td:nth-of-type(2)").textContent.trim());
+    const costo = parseFloat(item.querySelector("td:nth-of-type(3)").textContent.trim());
+    const total = cantidad * costo;
+    data.push([nombre, cantidad, costo.toFixed(2), total.toFixed(2)]);
+    costoTotal += total;
+  });
+
+  data.push(["", "", "Costo Total:", `${costoTotal.toFixed(2)} ${selectMoneda}`]);
+
+  let startY = 120; // Ajustamos el inicio de la tabla
+
+  pdf.autoTable({
+    head: headers,
+    body: data,
+    startY: startY,
+    styles: { fontSize: 10, cellPadding: 3 },
+    theme: 'grid',
+  });
+
+  const finalY = pdf.autoTable.previous.finalY || pdf.autoTableEndPosY();
+
+  let firmaStartY = finalY + 10;
+
+  if (firmaStartY + 40 > pdf.internal.pageSize.height) {
+    pdf.addPage();
+    firmaStartY = 10;
+  }
 
   if (firmaURL) {
     const imgProps = pdf.getImageProperties(firmaURL);
     const imgWidth = 80;
     const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-    pdf.addImage(firmaURL, 'JPEG', (pageWidth - imgWidth) / 2, 160, imgWidth, imgHeight);
+    pdf.addImage(firmaURL, 'JPEG', (pageWidth - imgWidth) / 2, firmaStartY, imgWidth, imgHeight);
   }
 
   const pdfBlob = pdf.output('blob');
-  await guardarReciboPDFEnFirestore(pdfBlob);
+  await guardarPresupuestoPDFEnFirestore(pdfBlob);
 }
 
 
+
 async function validarCampos() {
-  const tituloRecibo = document.getElementById("tituloRecibo").value;
+  const tituloPresupuesto = document.getElementById("tituloPresupuesto").value;
   const nombreCliente = document.getElementById("nombreCliente").value;
-  const tipoAsociado = document.getElementById("tipoAsociado").value;
-  const fechaRecibo = document.getElementById("fechaRecibo").value;
-  const cantidadRecibo = document.getElementById("cantidadRecibo").value;
+  const fechaPresupuesto = document.getElementById("fechaPresupuesto").value;
   const selectMoneda = document.getElementById("selectMoneda").value;
+  //const emailCliente = document.getElementById("emailCliente").value;
 
   let nombreEmisor;
   let camposFaltantes = [];
@@ -331,11 +358,9 @@ async function validarCampos() {
     }
   }
 
-  if (!tituloRecibo) camposFaltantes.push("Título del recibo");
+  if (!tituloPresupuesto) camposFaltantes.push("Título del presupuesto");
   if (!nombreCliente) camposFaltantes.push("Nombre del cliente");
-  if (!tipoAsociado) camposFaltantes.push("Tipo de asociado");
-  if (!fechaRecibo) camposFaltantes.push("Fecha del recibo");
-  if (!cantidadRecibo) camposFaltantes.push("Cantidad");
+  if (!fechaPresupuesto) camposFaltantes.push("Fecha del Presupuesto");
   if (!selectMoneda) camposFaltantes.push("Moneda");
   if (!nombreEmisor) camposFaltantes.push("Nombre del emisor");
   if (firmaVacia) camposFaltantes.push("Firma");
@@ -348,79 +373,201 @@ async function validarCampos() {
   return true;
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const botonAgregar = document.getElementById("agregarProducto");
+  const listaProductos = document.getElementById("listaProductos");
+  const productos = [];
+
+  // Evento para agregar un producto o servicio a la lista
+  botonAgregar.addEventListener("click", function () {
+    const nombreProducto = document.getElementById("nombreProducto").value.trim();
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const costo = parseFloat(document.getElementById("costo").value);
+
+    // Validar que se ingresen valores en los campos
+    if (!nombreProducto || isNaN(cantidad) || isNaN(costo)) {
+      alert("Por favor completa todos los campos correctamente.");
+      return;
+    }
+
+    // Agregar producto al arreglo
+    productos.push({ nombre: nombreProducto, cantidad, costo });
+
+    // Actualizar la tabla de productos
+    actualizarTablaProductos();
+
+    // Limpiar campos después de agregar el producto/servicio
+    document.getElementById("nombreProducto").value = "";
+    document.getElementById("cantidad").value = "";
+    document.getElementById("costo").value = "";
+  });
+
+  function actualizarTablaProductos() {
+    // Limpiar la tabla antes de actualizarla
+    listaProductos.innerHTML = "";
+
+    // Llenar la tabla con los productos
+    productos.forEach((producto) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${producto.nombre}</td>
+        <td>${producto.cantidad}</td>
+        <td>${producto.costo.toFixed(2)}</td>
+      `;
+      listaProductos.appendChild(row);
+    });
+  }
+
+});
+
+
 // Guardar el PDF en Firebase Storage y almacenar su respectiva URL en Firestore
-async function guardarReciboPDFEnFirestore(pdfBlob) {
+async function guardarPresupuestoPDFEnFirestore(pdfBlob) {
   try {
     const user = auth.currentUser;
-    if (user) {
-      // Crear una referencia a Firebase Storage
-      const storagePath = `Usuarios/${user.uid}/Recibos/${Date.now()}.pdf`;
-      const storageRef = ref(storage, storagePath);
-
-      // Subir el PDF a Firebase Storage con seguimiento del progreso
-      const uploadTask = uploadBytesResumable(storageRef, pdfBlob);
-
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          // Obtener el progreso de la subida
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-          showMessage(`Carga en progreso: ${progress.toFixed(2)}%`, "warning");
-        }, 
-        (error) => {
-          console.error("Error al subir el archivo:", error);
-          showMessage("Error al subir el archivo", "error");
-        }, 
-        async () => {
-          // Obtener la URL de descarga del PDF
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          // Obtener una referencia al documento del usuario
-          const userDocRef = doc(db, "Usuarios", user.uid);
-
-          // Guardar la URL del PDF en Firestore
-          const reciboData = {
-            tituloRecibo: document.getElementById("tituloRecibo").value,
-            nombreCliente: document.getElementById("nombreCliente").value,
-            direccionCliente: document.getElementById("direccionCliente").value,
-            telefonoCliente: document.getElementById("telefonoCliente").value,
-            fechaRecibo: document.getElementById("fechaRecibo").value,
-            conceptoRecibo: document.getElementById("conceptoRecibo").value,
-            cantidadRecibo: document.getElementById("cantidadRecibo").value,
-            selectMoneda: document.getElementById("selectMoneda").value,
-            tipoAsociado: document.getElementById("tipoAsociado").value,
-            firmaURL: getSignatureImage(),
-            pdfURL: downloadURL,
-            datosEmisor: {
-              nombre: document.getElementById("nombreIndividual").value || document.getElementById("nombreEmpresa").value,
-              direccion: document.getElementById("direccionIndividual").value || document.getElementById("direccionEmpresa").value,
-              telefono: document.getElementById("telefonoIndividual").value || document.getElementById("telefonoEmpresa").value,
-            }
-          };
-
-          // Agregar un nuevo documento a la subcolección "Recibos"
-          await addDoc(collection(userDocRef, "Recibos"), reciboData);
-
-          showMessage("Recibo creado exitosamente", "success");
-          reproducirEfectoSonido();
-
-          confetti({
-            particleCount: 300,
-            spread: 150,
-            origin: { y: 0.8 }
-          });
-          vaciarCamposFormulario();
-        }
-      );
-    } else {
+    if (!user) {
       console.error("Usuario no autenticado");
       showMessage("Usuario no autenticado", "error");
+      return;
     }
+
+    // Obtener valores del formulario
+    const tituloPresupuesto = document.getElementById("tituloPresupuesto").value;
+    const nombreCliente = document.getElementById("nombreCliente").value;
+    const direccionCliente = document.getElementById("direccionCliente").value;
+    const telefonoCliente = document.getElementById("telefonoCliente").value;
+    const emailCliente = document.getElementById("emailCliente").value;
+    const fechaPresupuesto = document.getElementById("fechaPresupuesto").value;
+    const conceptoPresupuesto = document.getElementById("conceptoPresupuesto").value;
+    const selectMoneda = document.getElementById("selectMoneda").value;
+    const firmaURL = getSignatureImage();
+    const tiempoEntrega = document.getElementById("tiempoEntrega").value;
+    const validez = document.getElementById("validez").value;
+
+    // Obtener el tipo de perfil seleccionado por el usuario
+    const tipoPerfilSeleccionado = document.querySelector('input[name="tipoPerfil"]:checked');
+    if (!tipoPerfilSeleccionado) {
+      console.error("Debe seleccionar un tipo de perfil");
+      showMessage("Debe seleccionar un tipo de perfil", "error");
+      return;
+    }
+
+    // Obtener valores del formulario según el tipo de perfil seleccionado
+    let datosEmisor = {};
+    if (tipoPerfilSeleccionado.value === "empresa") {
+      datosEmisor = {
+        nombre: document.getElementById("nombreEmpresa").value,
+        direccion: document.getElementById("direccionEmpresa").value,
+        telefono: document.getElementById("telefonoEmpresa").value,
+        codigo: document.getElementById("codigoEmpresa").value
+      };
+    } else if (tipoPerfilSeleccionado.value === "individual") {
+      datosEmisor = {
+        nombre: document.getElementById("nombreIndividual").value,
+        direccion: document.getElementById("direccionIndividual").value,
+        telefono: document.getElementById("telefonoIndividual").value
+      };
+    }
+
+    // Construir los datos del presupuesto
+    const presupuestoData = {
+      tituloPresupuesto,
+      nombreCliente,
+      direccionCliente,
+      telefonoCliente,
+      emailCliente,
+      fechaPresupuesto,
+      conceptoPresupuesto,
+      selectMoneda,
+      firmaURL,
+      tiempoEntrega,
+      validez,
+      datosEmisor
+    };
+
+    // Obtener lista de productos/servicios
+    const listaProductos = document.getElementById("listaProductos");
+    const productos = [];
+    const items = listaProductos.querySelectorAll("tr");
+
+    items.forEach((item) => {
+      try {
+        const nombre = item.querySelector("td:nth-of-type(1)").textContent.trim();
+        const cantidad = parseInt(item.querySelector("td:nth-of-type(2)").textContent.trim());
+        const costo = parseFloat(item.querySelector("td:nth-of-type(3)").textContent.trim());
+
+        // Log the extracted values
+        console.log(`Producto - Nombre: ${nombre}, Cantidad: ${cantidad}, Costo: ${costo}`);
+
+        if (!nombre || isNaN(cantidad) || isNaN(costo)) {
+          throw new Error("Datos del producto no válidos");
+        }
+
+        productos.push({ nombre, cantidad, costo });
+      } catch (error) {
+        console.error("Error al procesar un producto:", error, item);
+        showMessage("Error al procesar un producto. Por favor, revise los datos e intente nuevamente.", "error");
+        return;
+      }
+    });
+
+    // Verificar que se hayan procesado correctamente todos los productos
+    if (productos.length !== items.length) {
+      console.error("No se pudieron procesar todos los productos.");
+      showMessage("No se pudieron procesar todos los productos. Por favor, revise los datos e intente nuevamente.", "error");
+      return;
+    }
+
+    // Log the final list of products
+    console.log("Productos procesados:", productos);
+
+    presupuestoData.productos = productos;
+
+    // Subir PDF a Cloud Storage
+    const storagePath = `Usuarios/${user.uid}/Presupuestos/${Date.now()}.pdf`;
+    const storageRef = ref(storage, storagePath);
+    const uploadTask = uploadBytesResumable(storageRef, pdfBlob);
+
+    // Esperar a que se complete la subida del PDF
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+        showMessage(`Carga en progreso: ${progress.toFixed(2)}%`, "warning");
+      },
+      async (error) => {
+        console.error("Error al subir el archivo:", error);
+        showMessage("Error al subir el archivo", "error");
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        console.log("URL de descarga del PDF:", downloadURL);
+        presupuestoData.pdfURL = downloadURL;
+
+        // Guardar datos del presupuesto en Firestore
+        const userDocRef = doc(db, "Usuarios", user.uid);
+        await addDoc(collection(userDocRef, "Presupuestos"), presupuestoData);
+
+        console.log("Subiendo: ", presupuestoData);
+
+        showMessage("Presupuesto creado exitosamente", "success");
+        reproducirEfectoSonido();
+
+        confetti({
+          particleCount: 300,
+          spread: 150,
+          origin: { y: 0.8 }
+        });
+        vaciarCamposFormulario();
+      }
+    );
   } catch (error) {
-    console.error("Error al guardar el recibo:", error);
-    showMessage("Error al guardar el recibo", "error");
+    console.error("Error al guardar el presupuesto:", error);
+    showMessage("Error al guardar el presupuesto", "error");
   }
 }
+
+
 
 function reproducirEfectoSonido() {
   const audio = new Audio('../../../resources/EfectoSonidoKid.mp3'); 
@@ -430,15 +577,14 @@ function reproducirEfectoSonido() {
 // Función para vaciar los campos del formulario
 function vaciarCamposFormulario() {
   setTimeout(() => {
-    document.getElementById("tituloRecibo").value = "";
+    document.getElementById("tituloPresupuesto").value = "";
     document.getElementById("nombreCliente").value = "";
     document.getElementById("direccionCliente").value = "";
     document.getElementById("telefonoCliente").value = "";
-    document.getElementById("fechaRecibo").value = "";
-    document.getElementById("conceptoRecibo").value = "";
-    document.getElementById("cantidadRecibo").value = "";
+    document.getElementById("emailCliente").value = "";
+    document.getElementById("fechaPresupuesto").value = "";
+    document.getElementById("conceptoPresupuesto").value = "";
     document.getElementById("selectMoneda").value = "";
-    document.getElementById("tipoAsociado").value = "";
     document.getElementById("nombreIndividual").value = "";
     document.getElementById("direccionIndividual").value = "";
     document.getElementById("telefonoIndividual").value = "";
@@ -458,20 +604,19 @@ function vaciarCamposFormulario() {
 }
 
 
-// Evento para el botón "Crear Recibo" que llama a la función generarPDF al hacer clic
+// Evento para el botón "Crear Presupuesto" que llama a la función generarPDF al hacer clic
 document.addEventListener("DOMContentLoaded", function () {
-  const botonCrearRecibo = document.getElementById("btnCrearRecibo");
+  const botonCrearPresupuesto = document.getElementById("btnCrearPresupuesto");
 
-  if (botonCrearRecibo) {
-    botonCrearRecibo.addEventListener("click", function (event) {
+  if (botonCrearPresupuesto) {
+    botonCrearPresupuesto.addEventListener("click", function (event) {
       event.preventDefault(); // Evita el envío del formulario
       generarPDF();
     });
   } else {
-    console.error("Botón 'Crear Recibo' no encontrado");
+    console.error("Botón 'Crear Presupuesto' no encontrado");
   }
 });
-
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -535,6 +680,8 @@ document.addEventListener("DOMContentLoaded", function () {
   togglePerfilVisibility();
 });
 
+
+
 // Función para guardar el archivo en Firebase Storage
 export async function guardarArchivo(input) {
   if (input.files && input.files[0]) {
@@ -543,8 +690,8 @@ export async function guardarArchivo(input) {
     const user = auth.currentUser;
 
     if (user) {
-      const fileName = "logo_recibo.jpg"; // Nombre del archivo
-      const storagePath = `Usuarios/${user.uid}/logosRecibos/${fileName}`; // Ruta de almacenamiento
+      const fileName = "logo_presupuesto.jpg"; // Nombre del archivo
+      const storagePath = `Usuarios/${user.uid}/logosPresupuestos/${fileName}`; // Ruta de almacenamiento
       const storageRef = ref(storage, storagePath);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
