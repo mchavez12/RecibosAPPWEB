@@ -12,7 +12,7 @@ export function showMessage (message, type = "success") {
       newWindow: true,
       close: true,
       gravity: "bottom",
-      position: "center",
+      position: type === "warning" ? "right" : "center",
       stopOnFocus: true,
       style: {
         color: "black",

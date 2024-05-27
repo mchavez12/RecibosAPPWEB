@@ -135,7 +135,7 @@ body {
   background-color: #2bdeaeaf;
 }
 .btn-receipt-cutoff {
-  background-color: #cfd470;
+  background-color: #e9d044;
 }
 .btn-receipt-cutoff:hover {
   background-color: #cfd470af;
@@ -226,3 +226,4 @@ body {
 #resultadosClientes li:hover {
   background-color: #d3d3d3; 
 }
+
