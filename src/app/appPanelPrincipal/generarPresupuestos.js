@@ -546,7 +546,7 @@ async function guardarPresupuestoPDFEnFirestore(pdfBlob) {
 }
 
 function reproducirEfectoSonido() {
-  const audio = new Audio('../../../resources/EfectoSonidoKid.mp3'); 
+  const audio = new Audio('../../resources/EfectoSonidoKid.mp3'); 
   audio.play();
 }
 

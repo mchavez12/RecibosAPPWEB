@@ -402,7 +402,7 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
 }
 
 function reproducirEfectoSonido() {
-  const audio = new Audio('../../../resources/EfectoSonidoKid.mp3'); 
+  const audio = new Audio('../../resources/EfectoSonidoKid.mp3'); 
   audio.play();
 }
 

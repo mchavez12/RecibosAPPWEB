@@ -80,20 +80,20 @@ body {
 }
 
 #imgCarrusel1{
-  background-image: url('../resources/carrusel1.webp');
+  background-image: url('./resources/carrusel1.webp');
   background-repeat: no-repeat;
   background-position: center center;
   background-color: rgb(255, 255, 255);
 }
 #imgCarrusel2{
-  background-image: url('../resources/carrusel2.webp');
+  background-image: url('./resources/carrusel2.webp');
   background-repeat: no-repeat;
   background-position: center center;
   background-color: rgb(246, 238, 170);
 
 }
 #imgCarrusel3{
-  background-image: url('../resources/carrusel3.png');
+  background-image: url('./resources/carrusel3.png');
   background-repeat: no-repeat;
   background-position: center center;
   background-color: rgb(194, 194, 194);
@@ -360,5 +360,5 @@ body {
 
 /* Estilos para aumentar el tamaño del puntero */
 .large-pointer {
-  cursor: url('../resources/punteroGrande.cur'), auto; /* URL del puntero personalizado */
+  cursor: url('./resources/punteroGrande.cur'), auto; /* URL del puntero personalizado */
 }
