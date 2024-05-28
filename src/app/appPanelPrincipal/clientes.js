@@ -18,7 +18,6 @@ async function mostrarClientesEnTabla() {
       if (user) {
         await mostrarDatosUsuario(user);
       } else {
-        // Mostrar un mensaje si el usuario no está autenticado
         showMessage("Usuario no autenticado", "error");
       }
     });

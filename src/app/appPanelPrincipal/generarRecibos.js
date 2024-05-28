@@ -22,7 +22,6 @@ import {
 const storage = getStorage();
 import { showMessage } from "../showMessage.js";
 
-// Función para mostrar/ocultar campos según el tipo de perfil seleccionado
 function togglePerfilVisibility() {
   const radioEmpresa = document.getElementById("perfilEmpresa");
   const radioIndividual = document.getElementById("perfilIndividual");
@@ -45,11 +44,11 @@ async function buscarClientes() {
   const resultadosElement = document.getElementById("resultadosClientes");
   const botonGuardarCliente = document.getElementById("botonGuardarCliente");
 
-  resultadosElement.innerHTML = ""; // Limpiar resultados anteriores
-  botonGuardarCliente.style.display = "none"; // Ocultar botón inicialmente
+  resultadosElement.innerHTML = ""; 
+  botonGuardarCliente.style.display = "none"; 
 
   if (campoBusqueda === "") {
-    return; // No hacer nada si el campo está vacío
+    return;
   }
 
   const user = auth.currentUser;
@@ -70,8 +69,7 @@ async function buscarClientes() {
           const clienteItem = document.createElement("li");
           clienteItem.classList.add("list-group-item");
 
-          // Guardar el ID del documento para identificar al cliente seleccionado
-          clienteItem.dataset.id = doc.id; // Almacenar ID del cliente
+          clienteItem.dataset.id = doc.id;
           clienteItem.innerHTML = `
             <strong>Nombre:</strong> ${datos.nombre}<br>
             <strong>Dirección:</strong> ${datos.direccion}<br>
@@ -81,10 +79,9 @@ async function buscarClientes() {
 
           resultadosElement.appendChild(clienteItem);
 
-          // Evento para seleccionar el cliente al hacer clic en el elemento
           clienteItem.addEventListener("click", () => {
-            clienteSeleccionado = datos; // Almacenar datos del cliente seleccionado
-            botonGuardarCliente.style.display = "inline-block"; // Mostrar botón para guardar
+            clienteSeleccionado = datos;
+            botonGuardarCliente.style.display = "inline-block";
           });
         });
       } else {
@@ -103,10 +100,8 @@ async function buscarClientes() {
   }
 }
 
-// Evento para el botón que guarda información del cliente en el formulario
 function guardarCliente() {
   if (clienteSeleccionado) {
-    // Guardar información del cliente en el formulario principal
     document.getElementById("nombreCliente").value = clienteSeleccionado.nombre;
     document.getElementById("tipoAsociado").value =
       clienteSeleccionado.tipo === "Cliente"
@@ -132,7 +127,6 @@ async function cargarPerfil() {
     if (user) {
       console.log("Usuario autenticado:", user.uid);
 
-      // Resto del código para cargar datos del perfil...
       const userDocRef = doc(db, "Usuarios", user.uid);
       const perfilCollectionRef = collection(userDocRef, "Perfil");
       const perfilDocRef = doc(perfilCollectionRef, "perfil_usuario");
@@ -141,7 +135,6 @@ async function cargarPerfil() {
       if (perfilDocSnap.exists()) {
         const perfilData = perfilDocSnap.data();
         
-        // Código para cargar datos según el tipo de perfil...
         if (perfilData.tipo === "empresa") {
           document.getElementById("perfilEmpresa").checked = true;
           togglePerfilVisibility();
@@ -177,7 +170,6 @@ async function cargarPerfil() {
 const { jsPDF } = window.jspdf;
 const signatureCanvas = document.getElementById("signatureCanvas");
 const clearButton = document.getElementById("clearButton");
-// Evento para borrar la firma
 clearButton.addEventListener("click", function() {
   clearCanvas();
 });
@@ -187,12 +179,10 @@ function clearCanvas() {
   context.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
 }
 
-// Función para obtener la imagen de la firma como una URL de datos
 function getSignatureImage() {
   return signatureCanvas.toDataURL();
 }
 
-// Función para convertir un archivo a base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -202,7 +192,6 @@ function fileToBase64(file) {
   });
 }
 
-// Función para generar el PDF y convertirlo a Blob
 async function generarPDF() {
   if (!(await validarCampos())) {
     return; 
@@ -279,10 +268,8 @@ async function generarPDF() {
   Teléfono del ${tipoAsociado === "tipoAsociadoCliente" ? "cliente" : "proveedor"}: ${telefonoCliente}
   `;
 
-  // Dividir el párrafo en líneas que quepan dentro del ancho de la página
   const lineasParrafo = pdf.splitTextToSize(parrafoRecibo, pageWidth - 20);
 
-  // Agregar las líneas del párrafo al PDF
   pdf.text(lineasParrafo, 10, 80);
 
   if (firmaURL) {
@@ -314,7 +301,6 @@ async function validarCampos() {
     nombreEmisor = document.getElementById("nombreIndividual").value;
   }
 
-  // Verificar el canvas de firma
   const canvasFirma = document.getElementById("signatureCanvas");
   if (!canvasFirma) {
     showMessage("No se pudo encontrar el canvas de firma", "error");
@@ -325,7 +311,7 @@ async function validarCampos() {
 
   let firmaVacia = true;
   for (let i = 0; i < firmaData.data.length; i += 4) {
-    if (firmaData.data[i + 3] !== 0) { // Verifica el canal alfa (transparencia)
+    if (firmaData.data[i + 3] !== 0) { 
       firmaVacia = false;
       break;
     }
@@ -348,7 +334,6 @@ async function validarCampos() {
   return true;
 }
 
-// Guardar el PDF en Firebase Storage y almacenar su respectiva URL en Firestore
 async function guardarReciboPDFEnFirestore(pdfBlob) {
   try {
     const user = auth.currentUser;
@@ -357,12 +342,10 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
       const storagePath = `Usuarios/${user.uid}/Recibos/${Date.now()}.pdf`;
       const storageRef = ref(storage, storagePath);
 
-      // Subir el PDF a Firebase Storage con seguimiento del progreso
       const uploadTask = uploadBytesResumable(storageRef, pdfBlob);
 
       uploadTask.on('state_changed', 
         (snapshot) => {
-          // Obtener el progreso de la subida
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log(`Upload is ${progress}% done`);
           showMessage(`Carga en progreso: ${progress.toFixed(2)}%`, "warning");
@@ -372,13 +355,10 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
           showMessage("Error al subir el archivo", "error");
         }, 
         async () => {
-          // Obtener la URL de descarga del PDF
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-          // Obtener una referencia al documento del usuario
           const userDocRef = doc(db, "Usuarios", user.uid);
 
-          // Guardar la URL del PDF en Firestore
           const reciboData = {
             tituloRecibo: document.getElementById("tituloRecibo").value,
             nombreCliente: document.getElementById("nombreCliente").value,
@@ -398,7 +378,6 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
             }
           };
 
-          // Agregar un nuevo documento a la subcolección "Recibos"
           await addDoc(collection(userDocRef, "Recibos"), reciboData);
 
           showMessage("Recibo creado exitosamente", "success");
@@ -423,11 +402,10 @@ async function guardarReciboPDFEnFirestore(pdfBlob) {
 }
 
 function reproducirEfectoSonido() {
-  const audio = new Audio('../../../resources/EfectoSonidoKid.mp3'); 
+  const audio = new Audio('../../resources/EfectoSonidoKid.mp3'); 
   audio.play();
 }
 
-// Función para vaciar los campos del formulario
 function vaciarCamposFormulario() {
   setTimeout(() => {
     document.getElementById("tituloRecibo").value = "";
@@ -449,16 +427,14 @@ function vaciarCamposFormulario() {
     document.getElementById("logoEmpresa").value = "";
     document.getElementById("logoEmpresaPreview").value = "";
     clearCanvas();
-    // Recargar la página después de dos segundos
     setTimeout(() => {
-      window.scrollTo(0, 0); // Desplazarse al principio de la página
+      window.scrollTo(0, 0); 
       window.location.reload();
     }, 2000);
   }, 2000);
 }
 
 
-// Evento para el botón "Crear Recibo" que llama a la función generarPDF al hacer clic
 document.addEventListener("DOMContentLoaded", function () {
   const botonCrearRecibo = document.getElementById("btnCrearRecibo");
 
@@ -479,11 +455,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnBorrar = document.getElementById("borrarImagen");
 
   inputFile.addEventListener("change", () => {
-    guardarArchivo(inputFile); // Carga la imagen al cambiar el archivo
+    guardarArchivo(inputFile);
   });
 
   if (btnBorrar) {
-    btnBorrar.addEventListener("click", limpiarVistaPrevia); // Solo limpia la vista previa, no borra en Storage
+    btnBorrar.addEventListener("click", limpiarVistaPrevia); 
   }});
 
 
@@ -491,20 +467,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const botonGuardarCliente = document.getElementById("botonGuardarCliente");
 
   if (botonGuardarCliente) {
-    botonGuardarCliente.addEventListener("click", guardarCliente); // Guardar al hacer clic
+    botonGuardarCliente.addEventListener("click", guardarCliente); 
   }
 
   const botonBuscar = document.getElementById("botonBuscarCliente");
 
   if (botonBuscar) {
-    botonBuscar.addEventListener("click", buscarClientes); // Ejecutar la búsqueda al hacer clic
+    botonBuscar.addEventListener("click", buscarClientes);
   }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
   const mostrarPerfiles = document.getElementById("mostrarPerfiles");
 
-  // Registrar evento para cargar el perfil al hacer clic
   if (mostrarPerfiles) {
     mostrarPerfiles.addEventListener("click", cargarPerfil);
     console.log("Evento registrado para 'Mostrar Perfiles'");
@@ -512,7 +487,6 @@ document.addEventListener("DOMContentLoaded", function () {
     console.error("Botón 'Mostrar Perfiles' no encontrado");
   }
 
-  // Registrar eventos para cambiar visibilidad según el tipo de perfil
   const radioEmpresa = document.getElementById("perfilEmpresa");
   const radioIndividual = document.getElementById("perfilIndividual");
 
@@ -524,14 +498,12 @@ document.addEventListener("DOMContentLoaded", function () {
     radioIndividual.addEventListener("change", togglePerfilVisibility);
   }
 
-  // Evento para el botón que inicia la búsqueda
   const botonBuscar = document.getElementById("botonBuscarCliente");
 
   if (botonBuscar) {
-    botonBuscar.addEventListener("click", buscarClientes); // Ejecutar la búsqueda al hacer clic
+    botonBuscar.addEventListener("click", buscarClientes);
   }
 
-  // Asegurar visibilidad correcta al cargar la página
   togglePerfilVisibility();
 });
 
@@ -543,8 +515,8 @@ export async function guardarArchivo(input) {
     const user = auth.currentUser;
 
     if (user) {
-      const fileName = "logo_recibo.jpg"; // Nombre del archivo
-      const storagePath = `Usuarios/${user.uid}/logosRecibos/${fileName}`; // Ruta de almacenamiento
+      const fileName = "logo_recibo.jpg";
+      const storagePath = `Usuarios/${user.uid}/logosRecibos/${fileName}`;
       const storageRef = ref(storage, storagePath);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -556,8 +528,8 @@ export async function guardarArchivo(input) {
           console.log(`Progreso de carga: ${progress}%`);
         },
         (error) => {
-          console.error("Error al subir el archivo:", error); // Obtén más detalles del error
-          showMessage("Error al subir el archivo: " + error.message, "error"); // Usa `error.message` para obtener información
+          console.error("Error al subir el archivo:", error);
+          showMessage("Error al subir el archivo: " + error.message, "error");
         },
         async () => {
           try {
@@ -565,8 +537,8 @@ export async function guardarArchivo(input) {
 
             const logoPreview = document.getElementById("logoEmpresaPreview");
             if (logoPreview) {
-              logoPreview.src = downloadURL; // Muestra la imagen cargada
-              logoPreview.style.display = "block"; // Asegúrate de que esté visible
+              logoPreview.src = downloadURL; 
+              logoPreview.style.display = "block";
             } else {
               console.error("Element 'logoEmpresaPreview' no encontrado.");
             }
@@ -590,17 +562,16 @@ export async function guardarArchivo(input) {
 }
 
 
-// Función para borrar la imagen de Firebase Storage
 export async function borrarImagen() {
   const storage = getStorage();
   const user = auth.currentUser;
 
   if (user) {
-    const storagePath = `Usuarios/${user.uid}/logoPerfil/logo_empresa.jpg`; // Ruta de almacenamiento
+    const storagePath = `Usuarios/${user.uid}/logoPerfil/logo_empresa.jpg`; 
     const storageRef = ref(storage, storagePath);
 
     try {
-      await deleteObject(storageRef); // Borra el archivo en Storage
+      await deleteObject(storageRef); 
       console.log("Imagen eliminada con éxito");
 
       // Elimina la URL de Firestore
@@ -609,10 +580,9 @@ export async function borrarImagen() {
 
       showMessage("Imagen eliminada con éxito", "success");
 
-      // Oculta la vista previa
       const logoPreview = document.getElementById("logoEmpresaPreview");
       logoPreview.src = "";
-      logoPreview.style.display = "none"; // Oculta la vista previa
+      logoPreview.style.display = "none"; 
     } catch (error) {
       console.error("Error al eliminar la imagen:", error);
       showMessage("Error al eliminar la imagen", "error");
@@ -627,8 +597,7 @@ function limpiarVistaPrevia() {
   const logoPreview = document.getElementById("logoEmpresaPreview");
   const inputFile = document.getElementById("logoEmpresa");
 
-  // Limpiar la vista previa y el campo de entrada de archivos
   logoPreview.src = "";
-  logoPreview.style.display = "none"; // Ocultar la imagen
-  inputFile.value = ""; // Restablecer el campo de archivo
+  logoPreview.style.display = "none"; 
+  inputFile.value = ""; 
 }

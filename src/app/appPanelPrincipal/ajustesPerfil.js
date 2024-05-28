@@ -16,7 +16,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
 import { showMessage } from "../showMessage.js";
 
-// Evento que se dispara cuando el DOM está completamente cargado
 document.addEventListener("DOMContentLoaded", async function () {
   try {
     auth.onAuthStateChanged(async (user) => {
@@ -31,24 +30,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         const logoPreview = document.getElementById("logoEmpresaPreview");
         const btnBorrarImagen = document.getElementById("borrarImagen");
 
-        // Obtener y mostrar el logotipo desde Firebase Storage
         try {
           const downloadURL = await getDownloadURL(storageRef);
           logoPreview.src = downloadURL;
-          logoPreview.style.display = "block"; // Asegúrate de que esté visible
+          logoPreview.style.display = "block";
           console.log("Logotipo cargado desde:", downloadURL);
 
           if (btnBorrarImagen) {
-            btnBorrarImagen.style.display = "inline-block"; // Hacer visible el botón para borrar la imagen
+            btnBorrarImagen.style.display = "inline-block";
           }
 
         } catch (error) {
           console.error("Error al cargar la imagen desde Storage:", error);
           showMessage("No se encontró el logotipo de perfil", "info");
-          logoPreview.style.display = "none"; // Oculta la vista previa si no hay logotipo
+          logoPreview.style.display = "none";
 
           if (btnBorrarImagen) {
-            btnBorrarImagen.style.display = "none"; // Mantener el botón oculto si no hay imagen
+            btnBorrarImagen.style.display = "none";
           }
         }
 
@@ -108,7 +106,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           showMessage("Documento del perfil no encontrado", "info");
         }
 
-        // Asignar eventos y otros elementos
         const form = document.querySelector("form");
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
@@ -149,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-    // Eventos para mostrar/ocultar campos
+    
     const radioEmpresa = document.getElementById("perfilEmpresa");
     const radioIndividual = document.getElementById("perfilIndividual");
 
@@ -183,9 +180,8 @@ export async function guardarArchivo(input) {
     const user = auth.currentUser;
 
     if (user) {
-      // Nombre fijo para el archivo del logo del usuario
-      const fileName = "logo_empresa.jpg"; // Puedes cambiar la extensión según sea necesario
-      const storagePath = `Usuarios/${user.uid}/logoPerfil/${fileName}`; // Ruta donde se guardará la imagen
+      const fileName = "logo_empresa.jpg";
+      const storagePath = `Usuarios/${user.uid}/logoPerfil/${fileName}`;
 
       const storageRef = ref(storage, storagePath);
 
@@ -209,9 +205,8 @@ export async function guardarArchivo(input) {
             logoPreview.src = downloadURL;
             logoPreview.style.display = "block";
 
-            showMessage("Archivo cargado con éxito", "success");
+            showMessage("Imágen cargado con éxito", "success");
 
-            // Guardar la URL en Firestore para futura referencia
             const userDocRef = doc(db, "Usuarios", user.uid);
             await setDoc(userDocRef, { logoURL: downloadURL }, { merge: true });
           } catch (error) {
@@ -235,23 +230,21 @@ export async function borrarImagen() {
   const user = auth.currentUser;
 
   if (user) {
-    const storagePath = `Usuarios/${user.uid}/logos/logo_empresa.jpg`; // Ruta del archivo a eliminar
+    const storagePath = `Usuarios/${user.uid}/logoPerfil/logo_empresa.jpg`; 
     const storageRef = ref(storage, storagePath);
 
     try {
-      await deleteObject(storageRef); // Eliminar el archivo en Storage
+      await deleteObject(storageRef); 
       console.log("Imagen eliminada con éxito");
 
-      // Actualizar Firestore para eliminar el campo `logoURL`
       const userDocRef = doc(db, "Usuarios", user.uid);
       await updateDoc(userDocRef, { logoURL: deleteField() });
 
       showMessage("Imagen eliminada con éxito", "success");
 
-      // Quitar la vista previa
       const logoPreview = document.getElementById("logoEmpresaPreview");
       logoPreview.src = "";
-      logoPreview.style.display = "none"; // Ocultar la imagen
+      logoPreview.style.display = "none"; 
     } catch (error) {
       console.error("Error al eliminar la imagen:", error);
       showMessage("Error al eliminar la imagen", "error");

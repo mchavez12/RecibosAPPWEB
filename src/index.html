@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE-edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ReciboRisitas</title>
-    <link rel="icon" type="image/x-icon" href="../resources/logo.ico" />
+    <link rel="icon" type="image/x-icon" href="./resources/logo.ico" />
 
     <link
       rel="stylesheet"
@@ -34,7 +34,7 @@
         style="background-color: #7cbf71"
       >
         <div class="container">
-          <a class="navbar-brand" href="index.html">ReciboRisitas</a>
+          <a class="navbar-brand" href="index.html"><img src="./resources/logo.ico" alt="Logo ReciboRisitas" style="height: 30px;">ReciboRisitas</a>
           <button
             class="navbar-toggler"
             type="button"
@@ -52,6 +52,7 @@
                 <a
                   class="nav-link"
                   href="#"
+                  style="color: white;"
                   data-bs-toggle="modal"
                   data-bs-target="#inicioSesionModal"
                   >Inciar Sesion</a
@@ -61,13 +62,14 @@
                 <a
                   class="nav-link"
                   href="#"
+                  style="color: white;"
                   data-bs-toggle="modal"
                   data-bs-target="#registroModal"
                   >Registrarse</a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link logged-in" href="#" id="logout"
+                <a class="nav-link logged-in" style="color: white;" href="#" id="logout"
                   >Cerrar sesión</a
                 >
               </li>
@@ -236,6 +238,7 @@
           <div class="carousel-item active">
             <svg
               class="bd-placeholder-img"
+              id="imgCarrusel1"
               width="100%"
               height="100%"
               xmlns="http://www.w3.org/2000/svg"
@@ -253,12 +256,12 @@
               <div class="carousel-caption text-start">
                 <h1>Genera tus recibos y compartelos!</h1>
                 <p class="opacity-75">
-                  Some representative placeholder content for the first slide of
-                  the carousel.
+                  Crea recibos  al instante y compártelos fácilmente con tus clientes. Optimiza tu tiempo y facilita la gestión de tus documentos.
                 </p>
                 <p>
-                  <a class="btn btn-lg btn-primary" href="#">Sign up today</a>
+                  <a class="btn btn-lg btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#registroModal">¡Inicie hoy!</a>
                 </p>
+                
               </div>
             </div>
           </div>
@@ -267,6 +270,7 @@
           <div class="carousel-item">
             <svg
               class="bd-placeholder-img"
+              id="imgCarrusel2"
               width="100%"
               height="100%"
               xmlns="http://www.w3.org/2000/svg"
@@ -284,10 +288,8 @@
               <div class="carousel-caption">
                 <h1>Crea tus propios presupuestos y guarda tus contactos!</h1>
                 <p>
-                  Some representative placeholder content for the second slide
-                  of the carousel.
+                  Administra tus presupuestos y manten tus contactos organizados en un solo lugar. Simplifica tu trabajo y mejora la comunicación con tus clientes.
                 </p>
-                <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
               </div>
             </div>
           </div>
@@ -296,6 +298,7 @@
           <div class="carousel-item">
             <svg
               class="bd-placeholder-img"
+              id="imgCarrusel3"
               width="100%"
               height="100%"
               xmlns="http://www.w3.org/2000/svg"
@@ -313,16 +316,13 @@
               <div class="carousel-caption text-end">
                 <h1>Personaliza toda tu información!</h1>
                 <p>
-                  Some representative placeholder content for the third slide of
-                  this carousel.
-                </p>
-                <p>
-                  <a class="btn btn-lg btn-primary" href="#">Browse gallery</a>
+                  Ajusta y personaliza tus recibos y presupuestos según tus necesidades específicas. Da un toque profesional y único a cada documento.
                 </p>
               </div>
             </div>
           </div>
         </div>
+        
         <button
           class="carousel-control-prev"
           type="button"
@@ -350,94 +350,43 @@
       <div class="container marketing">
         <div class="row featurette">
           <div class="col-md-7">
-            <h2 class="featurette-heading fw-normal lh-1">Personalizable</h2>
-            <p class="lead">
-              Some great placeholder content for the first featurette here.
-              Imagine some exciting prose here.
-            </p>
+              <h2 class="featurette-heading fw-normal lh-1">Personalizable</h2>
+              <p class="lead">
+                  Personaliza cada recibo y presupuesto según las necesidades de tu negocio. Añade tu logotipo, cambia colores, y ajusta los formatos para que reflejen la imagen profesional de tu empresa.
+              </p>
           </div>
           <div class="col-md-5">
-            <svg
-              class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
-              width="500"
-              height="500"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder: 500x500"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
-              <text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">
-                500x500
-              </text>
-            </svg>
+              <img src="./resources/personalizacion.png" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" alt="Personalizable">
           </div>
-        </div>
+      </div>
 
         <hr class="featurette-divider" />
 
         <div class="row featurette">
           <div class="col-md-7 order-md-2">
-            <h2 class="featurette-heading fw-normal lh-1">Seguro</h2>
-            <p class="lead">
-              Another featurette? Of course. More placeholder content here to
-              give you an idea of how this layout would work with some actual
-              real-world content in place.
-            </p>
+              <h2 class="featurette-heading fw-normal lh-1">Seguro</h2>
+              <p class="lead">
+                  Garantizamos la seguridad de tus datos y documentos. Nuestro sistema está protegido con cifrado y tus datos son guardados en bases de datos seguras para mantener tu información confidencial y segura en todo momento.
+              </p>
           </div>
           <div class="col-md-5 order-md-1">
-            <svg
-              class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
-              width="500"
-              height="500"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder: 500x500"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
-              <text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">
-                500x500
-              </text>
-            </svg>
+              <img src="./resources/seguridad.webp" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" alt="Seguro">
           </div>
-        </div>
+      </div>
 
         <hr class="featurette-divider" />
 
         <div class="row featurette">
           <div class="col-md-7">
-            <h2 class="featurette-heading fw-normal lh-1">Sencillo de usar</h2>
-            <p class="lead">
-              And yes, this is the last block of representative placeholder
-              content. Again, not really intended to be actually read, simply
-              here to give you a better view of what this would look like with
-              some actual content. Your content.
-            </p>
+              <h2 class="featurette-heading fw-normal lh-1">Sencillo de usar</h2>
+              <p class="lead">
+                  Nuestra plataforma es intuitiva y fácil de usar, permitiéndote generar recibos y presupuestos en cuestión de minutos, sin necesidad de conocimientos técnicos avanzados.
+              </p>
           </div>
           <div class="col-md-5">
-            <svg
-              class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto"
-              width="500"
-              height="500"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder: 500x500"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="var(--bs-secondary-bg)" />
-              <text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">
-                500x500
-              </text>
-            </svg>
+              <img src="./resources/facilusar.png" class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" alt="Sencillo de usar">
           </div>
-        </div>
+      </div>
 
         <hr class="featurette-divider" />
 
@@ -446,61 +395,73 @@
         <!-- ############################# 2 imagenes de Heading ################################################################################################################################# -->
         <div class="row">
           <div class="col-lg-4 offset-lg-2">
-            <svg
-              class="bd-placeholder-img rounded-circle"
-              width="140"
-              height="140"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect
-                width="100%"
-                height="100%"
-                fill="var(--bs-secondary-color)"
-              />
-            </svg>
-            <h2 class="fw-normal">Mauricio Chávez Mancilla</h2>
-            <p>
-              Some representative placeholder content for the three columns of
-              text below the carousel. This is the first column.
-            </p>
-            <p>
-              <a class="btn btn-secondary" href="#">View details &raquo;</a>
-            </p>
+              <img src="./resources/FotoMau.jpeg" class="bd-placeholder-img rounded-circle" width="140" height="140" alt="Mauricio Chávez Mancilla">
+              <h2 class="fw-normal">Mauricio Chávez Mancilla</h2>
+              <p>
+                  Mauricio es un experto en gestión de documentos y fundador de ReciboRisitas. Con años de experiencia, ha ayudado a numerosas empresas a optimizar sus procesos administrativos.
+              </p>
+              <p>
+                  <a class="btn btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#modalMauricio">Ver detalles &raquo;</a>
+              </p>
           </div>
           <!-- /.col-lg-4 -->
-
+      
           <div class="col-lg-4">
-            <svg
-              class="bd-placeholder-img rounded-circle"
-              width="140"
-              height="140"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect
-                width="100%"
-                height="100%"
-                fill="var(--bs-secondary-color)"
-              />
-            </svg>
-            <h2 class="fw-normal">Nadia Michelle Nava Cruz</h2>
-            <p>
-              Another exciting bit of representative placeholder content. This
-              time, we've moved on to the second column.
-            </p>
-            <p>
-              <a class="btn btn-secondary" href="#">View details &raquo;</a>
-            </p>
+              <img src="./resources/FotoNadia.jpeg" class="bd-placeholder-img rounded-circle" width="140" height="140" alt="Nadia Michelle Nava Cruz">
+              <h2 class="fw-normal">Nadia Michelle Nava Cruz</h2>
+              <p>
+                  Nadia es la directora de operaciones de ReciboRisitas, especializada en la implementación de soluciones tecnológicas para la mejora de la eficiencia en la gestión de documentos.
+              </p>
+              <p>
+                  <a class="btn btn-secondary" href="#" data-bs-toggle="modal" data-bs-target="#modalNadia">Ver detalles &raquo;</a>
+              </p>
           </div>
+          <!-- /.col-lg-4 -->
+      </div>
+      <!-- /.row -->
+      
+      <!-- Modal Mauricio -->
+      <div class="modal fade" id="modalMauricio" tabindex="-1" aria-labelledby="modalMauricioLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalMauricioLabel">Mauricio Chávez Mancilla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="./resources/FotoMau.jpeg" class="img-fluid rounded mb-3" alt="Mauricio Chávez Mancilla">
+                    <p class="text-justify">
+                        Mauricio es un experto en gestión de documentos y fundador de ReciboRisitas. Con años de experiencia, ha ayudado a numerosas empresas a optimizar sus procesos administrativos.
+                    </p>
+                    <p class="text-justify">
+                        Ha trabajado en varios proyectos internacionales, mejorando la eficiencia y reduciendo costos en la gestión documental. Su pasión por la tecnología y la innovación ha sido clave para el desarrollo de soluciones avanzadas en ReciboRisitas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Nadia -->
+    <div class="modal fade" id="modalNadia" tabindex="-1" aria-labelledby="modalNadiaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalNadiaLabel">Nadia Michelle Nava Cruz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="./resources/FotoNadia.jpeg" class="img-fluid rounded mb-3" alt="Nadia Michelle Nava Cruz">
+                    <p class="text-justify">
+                        Nadia es la directora de operaciones de ReciboRisitas, especializada en la implementación de soluciones tecnológicas para la mejora de la eficiencia en la gestión de documentos.
+                    </p>
+                    <p class="text-justify">
+                        Con una sólida formación en ingeniería y gestión, Nadia ha liderado múltiples iniciativas que han transformado la manera en que las empresas manejan sus documentos, asegurando seguridad y eficiencia en todos los procesos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+      
           <!-- /.col-lg-4 -->
 
           <hr class="featurette-divider" />
@@ -512,13 +473,15 @@
       <!-- FOOTER -->
       <footer class="container">
         <p class="float-end"><a href="#">Regresar arriba</a></p>
-        <p>
+        <p class="main">
           &copy; 2024–2024 ReciboRisitas, Inc. &middot;
           <a href="#">Privacy</a> &middot; <a href="#">Terms</a>
         </p>
       </footer>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <script
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/toastify-js"
