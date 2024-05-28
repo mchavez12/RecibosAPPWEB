@@ -39,10 +39,7 @@ signInForm.addEventListener("submit", async (e) => {
       const userData = userDocSnap.data();
 
       if (userData.isFirstLogin === undefined || userData.isFirstLogin) {
-        showMessage(
-          "¡Te recomendamos configurar tu perfil primero!",
-          "warning"
-        );
+        //showMessage("¡Te recomendamos configurar tu perfil primero!",  "warning");
 
         await updateDoc(userDocRef, { isFirstLogin: false });
       }
@@ -61,7 +58,7 @@ signInForm.addEventListener("submit", async (e) => {
       showMessage("Usuario no encontrado", "error");
     } else {
       showMessage(
-        "Error de inicio de sesión. Por favor, inténtalo de nuevo más tarde.",
+        "Error de inicio de sesión. Correo o contraseña incorrectos",
         "error"
       );
     }

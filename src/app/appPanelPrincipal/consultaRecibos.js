@@ -137,10 +137,8 @@ async function eliminarRecibo(index, pdfURL) {
       const reciboDocId = querySnapshot.docs[index].id;
       const reciboDocRef = doc(recibosCollectionRef, reciboDocId);
 
-      // Eliminar el documento de Firestore
       await deleteDoc(reciboDocRef);
 
-      // Obtener la referencia del archivo en Firebase Storage usando la URL
       const storage = getStorage();
       const storageRef = ref(storage, pdfURL.replace(/^[^\/]+\/[^\/]+\/[^\/]+\//, ''));
 
@@ -152,7 +150,6 @@ async function eliminarRecibo(index, pdfURL) {
       const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
       modal.hide();
 
-      // Recarga la página después de 2 segundos
       setTimeout(function () {
         location.reload();
       }, 2000);
@@ -166,7 +163,6 @@ async function eliminarRecibo(index, pdfURL) {
   }
 }
 
-// Hacer que la función eliminarRecibo esté disponible globalmente
 window.eliminarRecibo = eliminarRecibo;
 
 window.viewPDF = function (url) {

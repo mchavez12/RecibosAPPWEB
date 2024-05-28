@@ -12,7 +12,7 @@ import { showMessage } from "../showMessage.js";
 let initialized = false;
 
 document.addEventListener("DOMContentLoaded", function () {
-  if (initialized) return; // Esto para evitar la inicialización duplicada (prueba para un error)
+  if (initialized) return; // Evitar inicializacion duplicada
   initialized = true;
 
   const addCliente = document.getElementById("nuevoClienteForm");

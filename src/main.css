@@ -53,6 +53,93 @@ body {
   letter-spacing: -0.05rem;
 }
 
+
+
+.carousel-item {
+  position: relative;
+  height: 80vh; /* Altura del carrusel, puedes ajustar según tus necesidades */
+  min-height: 300px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.carousel-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.carousel-item .container {
+  position: relative;
+  z-index: 2;
+}
+
+#imgCarrusel1{
+  background-image: url('../resources/carrusel1.webp');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: rgb(255, 255, 255);
+}
+#imgCarrusel2{
+  background-image: url('../resources/carrusel2.webp');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: rgb(246, 238, 170);
+
+}
+#imgCarrusel3{
+  background-image: url('../resources/carrusel3.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: rgb(194, 194, 194);
+}
+
+.carousel-caption {
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+.carousel-caption h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.carousel-caption p {
+  font-size: 1.5rem;
+}
+.carousel-caption .btn {
+  font-size: 1.25rem;
+}
+
+.lead {
+  font-size: 1.25rem;
+  font-weight: 300;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+}
+
+.modal-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+.rounded-circle {
+  border: 2px solid #ddd;
+}
+
 /* RESPONSIVE CSS
   -------------------------------------------------- */
 
@@ -227,3 +314,51 @@ body {
   background-color: #d3d3d3; 
 }
 
+/* Estilos para el modo de alto contraste */
+.high-contrast-mode {
+  background-color: black;
+  color: white;
+}
+
+.high-contrast-mode a {
+  color: yellow;
+}
+
+.high-contrast-mode h1 {
+  color: white;
+}
+
+/* Estilos para tamaño de letra */
+.large-font-size {
+  font-size: 1.5em;
+}
+
+.default-font-size {
+  font-size: 1em; /* Valor predeterminado, ajustar según sea necesario */
+}
+
+/* Estilos para aumentar espaciado entre letras */
+.increased-letter-spacing {
+  letter-spacing: 0.1em; /* Ajustar según sea necesario */
+}
+
+/* Estilos para desactivar animaciones */
+.no-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Estilos para colores accesibles */
+.accessible-colors {
+  background-color: #f5f5f5; /* Color de fondo claro */
+  color: #333; /* Texto oscuro */
+}
+
+.accessible-colors a {
+  color: #0066cc; /* Color de enlace accesible */
+}
+
+/* Estilos para aumentar el tamaño del puntero */
+.large-pointer {
+  cursor: url('../resources/punteroGrande.cur'), auto; /* URL del puntero personalizado */
+}

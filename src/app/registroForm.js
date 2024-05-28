@@ -14,8 +14,7 @@ RegistroForm.addEventListener("submit", async (e) => {
   const email = RegistroForm["registro-email"].value;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const contraseña = RegistroForm["registro-contraseña"].value;
-  const confirmarContraseña =
-    RegistroForm["registro-contraseña-confirmar"].value;
+  const confirmarContraseña = RegistroForm["registro-contraseña-confirmar"].value;
 
   if (!emailRegex.test(email)) {
     showMessage("Por favor, introduce un correo electrónico válido", "error");
@@ -26,6 +25,10 @@ RegistroForm.addEventListener("submit", async (e) => {
       "Las contraseñas no coinciden, ponte pilas, no te me duermas",
       "error"
     );
+    return;
+  }
+  if (contraseña.length < 8) {
+    showMessage("La contraseña debe tener al menos 8 caracteres", "error");
     return;
   }
 
@@ -68,22 +71,23 @@ RegistroForm.addEventListener("submit", async (e) => {
     } else if (error.code === "auth/weak-password") {
       showMessage("Contraseña muy debil", "error"); //Caso de error para contraseña floja
     } else if (error.code) {
-      showMessage("Algo salio mal!", "error"); //Caso de error el cual no fue definido
+      showMessage("Registro fallido", "error"); //Caso de error el cual no fue definido
     }
   }
 });
 
-export async function addUsuarioFirestore(
-  uid,
-  NombreUsuario,
-  correoElectronico,
-  contraseña
-) {
+function hashPassword(password) {
+  const hashedPassword = CryptoJS.SHA256(password).toString();
+  return hashedPassword;
+}
+
+async function addUsuarioFirestore(uid, NombreUsuario, correoElectronico, contraseña) {
   try {
+    const hashedPassword = await hashPassword(contraseña);
     await setDoc(doc(db, "Usuarios", uid), {
       NombreUsuario: NombreUsuario,
       correoElectronico: correoElectronico,
-      contraseña: contraseña,
+      contraseña: hashedPassword,
     });
     console.log("Usuario agregado a Firestore");
     console.log("El uid guardado es: " + uid);

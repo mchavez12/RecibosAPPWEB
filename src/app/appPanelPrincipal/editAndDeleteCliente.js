@@ -15,10 +15,8 @@ editarClienteModal.addEventListener("shown.bs.modal", async function (e) {
   const clientId = button.dataset.id;
   console.log("Cliente ID: " + clientId);
 
-  // Obtener los datos del cliente
   const cliente = await obtenerClientePorId(clientId);
 
-  // Rellenar los campos del formulario con los datos del cliente
   if (cliente) {
     document.getElementById("Editar-nombre").value = cliente.nombre;
     document.getElementById("Editar-direccion").value = cliente.direccion;
@@ -31,11 +29,9 @@ editarClienteModal.addEventListener("shown.bs.modal", async function (e) {
     console.error("Cliente no encontrado", "error");
   }
 
-  // Establecer el ID del cliente en el botón de guardar cambios
   document.getElementById("guardarClienteEditado").setAttribute("data-id", clientId);
 });
 
-// Función para obtener los datos del cliente por su ID desde la base de datos
 async function obtenerClientePorId(clientId) {
   try {
     const currentUser = auth.currentUser;
@@ -70,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const botonGuardar = document.getElementById("guardarClienteEditado");
 
   botonGuardar.addEventListener("click", async function (event) {
-    event.preventDefault(); // Evitar el comportamiento predeterminado de envío del formulario
+    event.preventDefault();
     
     try {
       const clienteId = this.getAttribute("data-id");
@@ -123,21 +119,17 @@ deleteClienteModal.addEventListener("show.bs.modal", async function (e) {
   const clientId = button.dataset.id;
   console.log("Cliente ID: " + clientId);
 
-  // Obtener los datos del cliente
   const cliente = await obtenerClientePorId(clientId);
 
-  // Rellenar el nombre del cliente seleccionado en el modal
   if (cliente && cliente.nombre) {
     document.getElementById("clienteSeleccionadoNombre").textContent = cliente.nombre;
   } else {
     showMessage("Cliente no encontrado", "error");
     console.error("Cliente no encontrado", "error");
-    // Si no se encuentra el cliente o el nombre está vacío, ocultar el modal de eliminar
     const modal = new bootstrap.Modal(document.getElementById('deleteClienteModal'));
     modal.hide();
   }
 
-  // Establecer el ID del cliente en el botón de confirmar eliminar
   document.getElementById("confirmarEliminarCliente").setAttribute("data-id", clientId);
 });
 
@@ -164,17 +156,15 @@ document.getElementById("confirmarEliminarCliente").addEventListener("click", as
       
       const clienteDocRef = doc(clientesCollectionRef, clienteId);
 
-      await deleteDoc(clienteDocRef); // Elimina el documento del cliente
+      await deleteDoc(clienteDocRef);
 
       showMessage("Cliente eliminado correctamente", "success");
 
-      // Cierra el modal después de 1 segundo
       setTimeout(function () {
         const modal = new bootstrap.Modal(document.getElementById('deleteClienteModal'));
         modal.hide();
       }, 1000);
 
-      // Recarga la página después de 2 segundos
       setTimeout(function () {
         location.reload();
       }, 2000);
