@@ -4,9 +4,6 @@ import { auth } from "./app/firebase.js";
 import { loginCheck } from "./app/loginCheck.js";
 
 import "./app/logout.js";
-import "./app/appPanelPrincipal/clientes.js";
-import "./app/appPanelPrincipal/addCliente.js";
-import "./app/appPanelPrincipal/editAndDeleteCliente.js";
 import "./app/accesibilidad.js";
 
 onAuthStateChanged(auth, async (user) => {

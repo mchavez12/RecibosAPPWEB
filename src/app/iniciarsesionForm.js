@@ -49,7 +49,7 @@ signInForm.addEventListener("submit", async (e) => {
 
     setTimeout(() => {
       window.location.href = "views/panelPrincipal.html";
-    }, 4000);
+    }, 2000);
 
   } catch (error) {
     if (error.code === "auth/wrong-password") {

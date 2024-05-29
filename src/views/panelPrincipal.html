@@ -22,85 +22,112 @@
     />
     <link rel="stylesheet" href="../main.css" />
     <script src="../mainPanelPrincipal.js" type="module"></script>
+    
   </head>
 
   <body>
     <header data-bs-theme="dark">
-        <nav class="navbar navbar-expand-md navbar-dark sticky-top" style="background-color: #68a25f">
-            <div class="container">
-                <a class="navbar-brand" href="./panelPrincipal.html"><img src="../resources/logo.ico" alt="Logo ReciboRisitas" style="height: 30px;">ReciboRisitas</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link logged-inPP" style="color: white;" href="#" id="logout">Cerrar sesión</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+      <nav class="navbar navbar-expand-md navbar-dark sticky-top" style="background-color: #68a25f">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./panelPrincipal.html"><img src="../resources/logo.ico" alt="Logo ReciboRisitas" style="height: 30px;">ReciboRisitas</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link logged-inPP" style="color: white;" href="#" id="logout">Cerrar sesión</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     </header>
 
-    <main class="main mt-3 mb-3">
+    <main class="main mt-3 mb-3 container">
       
-      <h1>Panel de herramientas</h1>
+      <h1 class="text-center">Panel de herramientas</h1>
 
-      <div class="grid-container mt-5" class="text-decoration-none">
-        <a href="./clientes.html">
-          <div class="grid-item btn btn-person">
-            <i class="bi bi-person"></i>
-            <span>Clientes</span>
-          </div>
-        </a>
-        <a href="./generarRecibos.html" class="text-decoration-none">
-          <div class="grid-item btn btn-receipt">
-            <i class="bi bi-receipt"></i>
-            <span>Generar recibos / Notas de entrega</span>
-          </div>
-        </a>
-        <a href="./consultarRecibos.html" class="text-decoration-none">
-          <div class="grid-item btn btn-coin">
-            <i class="bi bi-receipt-cutoff"></i>
-            <span>Consultar recibos / Notas de entrega</span>
-          </div>
-        </a>
-        <a href="./generarPresupuestos.html" class="text-decoration-none">
-          <div class="grid-item btn btn-receipt-cutoff">
-            <i class="bi bi-coin"></i>
-            <span>Generar presupuestos</span>
-          </div>
-        </a>
-        <a href="./consultarPresupuestos.html" class="text-decoration-none">
-          <div class="grid-item btn btn-cash-coin">
-            <i class="bi bi-cash-coin"></i>
-            <span>Consultar presupuestos</span>
-          </div>
-        </a>
-        <a href="./AboutUs.html" class="text-decoration-none">
-          <div class="grid-item btn btn-info-circle-fill">
-            <i class="bi bi-info-circle-fill"></i>
-            <span>Sobre nosotros</span>
-          </div>
-        </a>
-        <a href="./descargaApp.html" class="text-decoration-none">
-          <div class="grid-item btn btn-download">
-            <i class="bi bi-download"></i>
-            <span>Descarga la app</span>
-          </div>
-        </a>
-        <a href="./ajustesPerfil.html" class="text-decoration-none">
-          <div class="grid-item btn btn-gear">
-            <i class="bi bi-person-gear"></i>
-            <span>Ajustes del perfil</span>
-          </div>
-        </a>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./clientes.html" class="text-decoration-none">
+            <div class="grid-item btn btn-person">
+              <i class="bi bi-person"></i>
+              <span>Clientes</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./generarRecibos.html" class="text-decoration-none">
+            <div class="grid-item btn btn-receipt">
+              <i class="bi bi-receipt"></i>
+              <span>Generar recibos / Notas de entrega</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./consultarRecibos.html" class="text-decoration-none">
+            <div class="grid-item btn btn-coin">
+              <i class="bi bi-receipt-cutoff"></i>
+              <span>Consultar recibos / Notas de entrega</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./generarPresupuestos.html" class="text-decoration-none">
+            <div class="grid-item btn btn-receipt-cutoff">
+              <i class="bi bi-coin"></i>
+              <span>Generar presupuestos</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./consultarPresupuestos.html" class="text-decoration-none">
+            <div class="grid-item btn btn-cash-coin">
+              <i class="bi bi-cash-coin"></i>
+              <span>Consultar presupuestos</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./ajustesPerfil.html" class="text-decoration-none">
+            <div class="grid-item btn btn-gear">
+              <i class="bi bi-person-gear"></i>
+              <span>Ajustes del perfil</span>
+            </div>
+          </a>
+        </div>
+      
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./descargaApp.html" class="text-decoration-none">
+            <div class="grid-item btn btn-download">
+              <i class="bi bi-download"></i>
+              <span>Descarga la app</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-4 col-sm-6 mb-4">
+          <a href="./AboutUs.html" class="text-decoration-none">
+            <div class="grid-item btn btn-info-circle-fill">
+              <i class="bi bi-info-circle-fill"></i>
+              <span>Sobre nosotros</span>
+            </div>
+          </a>
+        </div>
+      
       </div>
+      
+      
       <!-- FOOTER -->
-      <footer class="container mt-5">
-        <p>
+      <footer class="mt-5">
+        <p class="text-center">
           &copy; 2024–2024 ReciboRisitas, Inc. &middot;
           <a href="#">Privacy</a> &middot; <a href="#">Terms</a>
         </p>
