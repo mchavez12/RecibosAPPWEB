@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         console.log("Usuario autenticado:", user.uid);
-        showMessage("Usuario autenticado", "success");
+        //showMessage("Usuario autenticado", "success");
 
         const storagePath = `Usuarios/${user.uid}/logoPerfil/logo_empresa.jpg`;
         const storage = getStorage();
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         } catch (error) {
           console.error("Error al cargar la imagen desde Storage:", error);
-          showMessage("No se encontró el logotipo de perfil", "info");
+          //showMessage("No se encontró el logotipo de perfil", "info");
           logoPreview.style.display = "none";
 
           if (btnBorrarImagen) {

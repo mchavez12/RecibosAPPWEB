@@ -23,6 +23,46 @@
     <link rel="stylesheet" href="../main.css" />
     <script src="../mainPerfil.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .container {
+        max-width: 800px; 
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+      }
+      .form-group.row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .form-group.row > .col-md-6 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      header {
+        background-color: #ff6464;
+        padding: 10px;
+      }
+      .navbar-brand img {
+        height: 30px;
+        margin-right: 10px; 
+      }
+      .navbar-brand {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: none;
+      }
+      #logout {
+        color: white;
+      }
+    </style>
+    
   </head>
   <body>
     <header data-bs-theme="dark">
@@ -30,7 +70,7 @@
         class="navbar navbar-expand-md navbar-dark sticky-top"
         style="background-color: #ff6464"
       >
-        <div class="container">
+        <div class="container" style="background-color: #e15a5a;">
           <a class="navbar-brand" href="./panelPrincipal.html"><img src="../resources/logo.ico" alt="Logo ReciboRisitas" style="height: 30px;">ReciboRisitas</a>
           <button
             class="navbar-toggler"
